@@ -6,7 +6,7 @@ async function loopOverChanges(changedFiles) {
     if (changedFiles.data.activities.length === 0)
         return;
 
-    let currentTimestamp = new Date().toDateString();
+    let currentTimestamp = new Date().toISOString();
 
     changedFiles.data.activities.forEach((activity) => {
         console.log(activity.primaryActionDetail);
