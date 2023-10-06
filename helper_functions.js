@@ -23,12 +23,12 @@ async function loopOverChanges(changedFiles) {
     });
 }
 
-async function notifyDriveChanges(message, diveChannel) {
-    console.log(message.content);
+async function notifyDriveChanges(fileID, diveChannel) {
+    console.log(fileID);
     await authorize()
         .then(async (driveClient) => {
             console.log("Authorized");
-            await buildNotificationMessage(driveClient, message.content).then((responseMessage) => {
+            await buildNotificationMessage(driveClient, fileID).then((responseMessage) => {
                 console.log(responseMessage);
 
                 let embed = new EmbedBuilder()
