@@ -1,6 +1,27 @@
 const {EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder} = require('discord.js');
-const {authorize, buildNotificationMessage, getFoldersMetaDataInFolder, getFolderMetaDataById} = require("./drive")
+const {authorize, buildNotificationMessage, getFoldersMetaDataInFolder, getFolderMetaDataById, pullChanges} = require("./drive")
+let lastCreatedFileId = "";
 
+async function loopOverChanges(changedFiles) {
+    let newLastCreatedFileId = changedFiles.data.activities[0].targets[0].driveItem.name.split('/')[1];
+
+    changedFiles.data.activities.forEach((activity) => {
+        console.log(activity.primaryActionDetail);
+        console.log(activity.targets);
+        if (activity.primaryActionDetail.create) {
+            activity.targets.forEach((target) => {
+                let fileId = target.driveItem.name.split('/')[1];
+                if (fileId === lastCreatedFileId) {
+                    lastCreatedFileId = newLastCreatedFileId;
+                    return;
+                }
+
+                const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
+                notifyDriveChanges(fileId, diveChannel);
+            });
+        }
+    });
+}
 
 async function notifyDriveChanges(message, diveChannel) {
     console.log(message.content);
@@ -89,6 +110,13 @@ async function createChannels(guild) {
         console.error('Error creating channels:', error);
     }
 }
+
+setInterval(() => {
+    authorize().then(async (driveClient) => {
+        let changes = await pullChanges(driveClient, DRIVE_ID);
+        await loopOverChanges(changes);
+    });
+}, 60000);
 
 module.exports = {
     notifyDriveChanges,

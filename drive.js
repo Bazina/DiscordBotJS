@@ -3,13 +3,11 @@ const path = require('path');
 const process = require('process');
 const {authenticate} = require('@google-cloud/local-auth');
 const {google} = require('googleapis');
-const {notifyDriveChanges} = require("./helper_functions");
 
 const SCOPES = ['https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/drive.activity.readonly'];
 
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
-let lastCreatedFileId = "";
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -180,43 +178,19 @@ async function pullChanges(authClient, driveId) {
     const drive = google.drive({version: 'v3', auth: authClient});
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
-    let changedFiles = await driveActivity.activity.query({
+    return await driveActivity.activity.query({
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: 10,
         }
     });
-
-    let newLastCreatedFileId = changedFiles.data.activities[0].targets[0].driveItem.name.split('/')[1];
-
-    changedFiles.data.activities.forEach((activity) => {
-        console.log(activity.primaryActionDetail);
-        console.log(activity.targets);
-        if (activity.primaryActionDetail.create) {
-            activity.targets.forEach((target) => {
-                let fileId = target.driveItem.name.split('/')[1];
-                if (fileId === lastCreatedFileId) {
-                    lastCreatedFileId = newLastCreatedFileId;
-                    return;
-                }
-
-                const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
-                notifyDriveChanges(fileId, diveChannel);
-            });
-        }
-    });
 }
-
-setInterval(() => {
-    authorize().then(async (driveClient) => {
-        await pullChanges(driveClient, DRIVE_ID);
-    });
-}, 60000);
 
 module.exports = {
     authorize,
     buildNotificationMessage,
     getCourseMetaDataInSpecificFoldersInDrive,
     getFoldersMetaDataInFolder,
-    getFolderMetaDataById
+    getFolderMetaDataById,
+    pullChanges
 };
