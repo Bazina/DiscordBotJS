@@ -1,4 +1,4 @@
-require('./globals.js');
+const global = await require('./globals.js');
 const {REST} = require('@discordjs/rest');
 const {Routes} = require('discord-api-types/v9');
 const {PermissionsBitField} = require('discord.js');
