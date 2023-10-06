@@ -9,7 +9,7 @@ async function loopOverChanges(changedFiles) {
         console.log(activity.primaryActionDetail);
         console.log(activity.targets);
         if (activity.primaryActionDetail.create) {
-            activity.targets.forEach((target) => {
+            activity.targets.forEach(async (target) => {
                 let fileId = target.driveItem.name.split('/')[1];
                 if (fileId === lastCreatedFileId) {
                     lastCreatedFileId = newLastCreatedFileId;
@@ -17,7 +17,7 @@ async function loopOverChanges(changedFiles) {
                 }
 
                 const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
-                notifyDriveChanges(fileId, diveChannel);
+                await notifyDriveChanges(fileId, diveChannel);
             });
         }
     });
