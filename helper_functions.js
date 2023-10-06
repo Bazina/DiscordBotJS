@@ -122,6 +122,7 @@ async function createChannels(guild) {
 
 setInterval(() => {
     authorize().then(async (driveClient) => {
+        console.log("Authorized", lastTimestamp);
         let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp);
         await loopOverChanges(changes);
     });
