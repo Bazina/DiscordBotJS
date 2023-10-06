@@ -1,9 +1,9 @@
 const {EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder} = require('discord.js');
 const {authorize, buildNotificationMessage, getFoldersMetaDataInFolder, getFolderMetaDataById, pullChanges} = require("./drive")
-let lastCreatedFileId = "";
+let lastTimeStamp = "2023-10-07T18:31:36.657Z";
 
 async function loopOverChanges(changedFiles) {
-    let newLastCreatedFileId = changedFiles.data.activities[0].targets[0].driveItem.name.split('/')[1];
+    let recentCreatedTimestamp = changedFiles.data.activities[0].timestamp;
 
     changedFiles.data.activities.forEach((activity) => {
         console.log(activity.primaryActionDetail);
@@ -11,8 +11,10 @@ async function loopOverChanges(changedFiles) {
         if (activity.primaryActionDetail.create) {
             activity.targets.forEach(async (target) => {
                 let fileId = target.driveItem.name.split('/')[1];
-                if (fileId === lastCreatedFileId) {
-                    lastCreatedFileId = newLastCreatedFileId;
+                let timeStamp = activity.timestamp;
+                console.log(fileId, timeStamp);
+                if (new Date(timeStamp).getDate() < new Date(lastTimeStamp).getDate()) {
+                    lastTimeStamp = recentCreatedTimestamp;
                     return;
                 }
 
@@ -113,7 +115,7 @@ async function createChannels(guild) {
 
 setInterval(() => {
     authorize().then(async (driveClient) => {
-        let changes = await pullChanges(driveClient, DRIVE_ID);
+        let changes = await pullChanges(driveClient, DRIVE_ID, lastTimeStamp);
         await loopOverChanges(changes);
     });
 }, 60000);

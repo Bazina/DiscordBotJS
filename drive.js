@@ -174,7 +174,7 @@ async function getFolderMetaDataById(authClient, folderId) {
     return folderMetaData.data;
 }
 
-async function pullChanges(authClient, driveId) {
+async function pullChanges(authClient, driveId, timestamp) {
     const drive = google.drive({version: 'v3', auth: authClient});
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
@@ -182,6 +182,7 @@ async function pullChanges(authClient, driveId) {
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: 10,
+            filter: `time >= "${timestamp}"`
         }
     });
 }
