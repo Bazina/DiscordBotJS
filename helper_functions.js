@@ -21,13 +21,6 @@ async function notifyDriveChanges(message, diveChannel) {
                     .setTimestamp();
 
                 diveChannel.send({content: "@here", embeds: [embed]});
-                const responseArray = [];
-                responseArray[dbIndices.name] = responseMessage.name;
-                responseArray[dbIndices.mimeType] = responseMessage.mimeType;
-                responseArray[dbIndices.directory] = responseMessage.directory;
-                responseArray[dbIndices.webViewLink] = responseMessage.webViewLink;
-                db.set(responseMessage.id, responseArray);
-
             });
         })
         .catch(console.error);
