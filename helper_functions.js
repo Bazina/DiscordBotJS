@@ -3,7 +3,7 @@ const {authorize, buildNotificationMessage, getFoldersMetaDataInFolder, getFolde
 let lastTimestamp = "2023-10-06T18:31:36.657Z";
 
 async function loopOverChanges(changedFiles) {
-    if (changedFiles.data.activities.length === 0)
+    if (changedFiles && changedFiles.data && changedFiles.data.activities?.length === 0)
         return;
 
     let currentTimestamp = new Date().toISOString();
@@ -36,7 +36,6 @@ async function notifyDriveChanges(fileID, diveChannel) {
     console.log(fileID);
     await authorize()
         .then(async (driveClient) => {
-            console.log("Authorized");
             await buildNotificationMessage(driveClient, fileID).then((responseMessage) => {
                 console.log(responseMessage);
 
