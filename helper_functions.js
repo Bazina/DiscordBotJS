@@ -18,6 +18,7 @@ async function loopOverChanges(changedFiles) {
                 console.log(fileId, timeStamp);
                 if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
                     lastTimestamp = currentTimestamp;
+                    console.log(lastTimestamp);
                     return;
                 }
 
@@ -25,6 +26,9 @@ async function loopOverChanges(changedFiles) {
                 await notifyDriveChanges(fileId, diveChannel);
             });
         }
+
+        lastTimestamp = currentTimestamp;
+        console.log(lastTimestamp, "out");
     });
 }
 
