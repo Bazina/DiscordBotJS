@@ -3,6 +3,9 @@ const {authorize, buildNotificationMessage, getFoldersMetaDataInFolder, getFolde
 let lastTimeStamp = "2023-10-07T18:31:36.657Z";
 
 async function loopOverChanges(changedFiles) {
+    if (changedFiles.data.activities.length === 0)
+        return;
+
     let recentCreatedTimestamp = changedFiles.data.activities[0].timestamp;
 
     changedFiles.data.activities.forEach((activity) => {
