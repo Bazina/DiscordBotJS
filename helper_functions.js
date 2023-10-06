@@ -6,7 +6,7 @@ async function loopOverChanges(changedFiles) {
     if (changedFiles.data.activities.length === 0)
         return;
 
-    let recentCreatedTimestamp = changedFiles.data.activities[0].timestamp;
+    let currentTimestamp = new Date().toDateString();
 
     changedFiles.data.activities.forEach((activity) => {
         console.log(activity.primaryActionDetail);
@@ -17,7 +17,7 @@ async function loopOverChanges(changedFiles) {
                 let timeStamp = activity.timestamp;
                 console.log(fileId, timeStamp);
                 if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
-                    lastTimestamp = recentCreatedTimestamp;
+                    lastTimestamp = currentTimestamp;
                     return;
                 }
 
