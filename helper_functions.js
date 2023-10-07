@@ -8,7 +8,7 @@ const {
 } = require("./drive")
 const maxLength = 20;
 let recentFilesIds = [];
-let lastTimestamp = "2023-10-06T18:31:36.657Z";
+let lastTimestamp = new Date();
 
 function pushRecentFile(fileId) {
     if (recentFilesIds.length < maxLength)
