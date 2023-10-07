@@ -156,7 +156,9 @@ async function replyWithRecentFiles(interaction) {
         });
         return;
     }
-
+    console.log('======================================== recentFilesIds')
+    console.log(recentFilesIds.length)
+    console.log('========================================')
     const selectedRecentFilesIds = recentFilesIds.slice(Math.max(-number, -recentFilesIds.length));
     if (selectedRecentFilesIds.length > 0) {
         const listEmbed = new EmbedBuilder()
