@@ -19,6 +19,6 @@ client.on('ready', () => {
     }
 });
 
-//keepAlive()
+keepAlive()
 authorize();
 client.login(token);
