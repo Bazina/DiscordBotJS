@@ -1,5 +1,5 @@
 const {EmbedBuilder} = require('discord.js');
-const {replyWithCourseData} = require("./helper_functions");
+const {replyWithCourseData, replyWithRecentFiles} = require("./helper_functions");
 
 client.on('interactionCreate', async (interaction) => {
 
@@ -15,6 +15,9 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.commandName === 'get') {
         await replyWithCourseData(interaction);
     }
+
+    if (interaction.commandName === 'recent')
+        await replyWithRecentFiles(interaction);
 });
 
 client.on('interactionCreate', async (interaction) => {
