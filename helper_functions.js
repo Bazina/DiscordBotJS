@@ -7,7 +7,7 @@ const {
     pullChanges,
     pullChangesWithLimit
 } = require("./drive")
-const maxLength = 20;
+const maxLength = 21;
 let recentFilesInfo = [];
 let lastTimestamp = new Date().toISOString();
 let beginningOfRecents = "2023-10-06T18:31:36.657Z";
@@ -156,7 +156,7 @@ async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
     if (number <= 0 || number > maxLength) {
         await interaction.reply({
-            content: 'Invalid number. Please enter a value between 1 and 20.',
+            content: 'Invalid number. Please enter a value between 1 and 21.',
             ephemeral: true
         });
         return;
@@ -170,7 +170,6 @@ async function replyWithRecentFiles(interaction) {
 
         for (const selectedFileInfo of selectedRecentFilesInfo) {
             console.log("File Data info = \n", selectedFileInfo);
-
             listEmbed.addFields(
                 {
                     name: selectedFileInfo.name,
