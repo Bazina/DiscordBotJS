@@ -2,6 +2,7 @@ require('./helper_functions.js');
 require('./message_create.js');
 require('./interactions.js');
 
+const keepAlive = require("./server")
 const {authorize} = require("./drive")
 
 client.on('ready', () => {
@@ -16,5 +17,6 @@ client.on('ready', () => {
     }
 });
 
+keepAlive()
 authorize();
 client.login(token);
