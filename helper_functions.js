@@ -8,7 +8,7 @@ const {
 } = require("./drive")
 const maxLength = 20;
 let recentFilesIds = [];
-let lastTimestamp = new Date();
+let lastTimestamp = new Date().toISOString();
 let beginningOfRecents = "2023-10-06T18:31:36.657Z";
 
 function pushRecentFile(fileId) {
@@ -27,6 +27,7 @@ async function initializeRecentFiles() {
     let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents,20);
     if (!isActivitiesDataEmpty(recentFiles))
         return;
+
 
 }
 async function loopOverChanges(changedFiles) {
