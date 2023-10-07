@@ -27,7 +27,7 @@ function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
 }
 
 function isActivitiesDataEmpty(files) {
-    return files && files.data && files.data.activities && files.data.activities.length > 0;
+    return !files || !files.data || !files.data.activities || files.data.activities.length < 0;
 }
 
 async function initializeRecentFiles() {
