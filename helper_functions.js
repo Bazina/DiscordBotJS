@@ -33,7 +33,7 @@ function isActivitiesDataEmpty(files) {
 async function initializeRecentFiles() {
     authorize().then(async (driveClient) => {
         let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents, 20);
-        if (!isActivitiesDataEmpty(recentFiles))
+        if (isActivitiesDataEmpty(recentFiles))
             return;
 
         recentFiles.data.activities.forEach((activity) => {
@@ -52,7 +52,7 @@ async function initializeRecentFiles() {
 }
 
 async function loopOverChanges(changedFiles) {
-    if (!isActivitiesDataEmpty(changedFiles))
+    if (isActivitiesDataEmpty(changedFiles))
         return;
 
     let currentTimestamp = new Date();
