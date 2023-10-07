@@ -8,16 +8,21 @@ const {
     pullChangesWithLimit
 } = require("./drive")
 const maxLength = 20;
-let recentFilesIds = [];
+let recentFilesInfo = [];
 let lastTimestamp = new Date().toISOString();
 let beginningOfRecents = "2023-10-06T18:31:36.657Z";
 
-function pushRecentFile(fileId) {
-    if (recentFilesIds.length < maxLength)
-        recentFilesIds.push(fileId);
+function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
+    const responseDict = {};
+    responseDict.name = responseMessage.name;
+    responseDict.mimeType = responseMessage.mimeType;
+    responseDict.directory = responseMessage.directory;
+    responseDict.webViewLink = responseMessage.webViewLink;
+    if (recentFilesInfo.length < maxLength)
+        recentFilesInfo.push(responseDict);
     else {
-        recentFilesIds.shift();
-        recentFilesIds.push(fileId);
+        recentFilesInfo.shift();
+        recentFilesInfo.push(responseDict);
     }
 }
 
@@ -34,9 +39,11 @@ async function initializeRecentFiles() {
         recentFiles.data.activities.forEach((activity) => {
             console.log(activity.primaryActionDetail);
             console.log(activity.targets);
-            activity.targets.forEach((target) => {
+            activity.targets.forEach(async (target) => {
                 let fileId = target.driveItem.name.split('/')[1];
-                pushRecentFile(fileId);
+                await buildNotificationMessage(driveClient, fileId).then((responseMessage) => {
+                    pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
+                });
             });
 
         });
@@ -63,8 +70,6 @@ async function loopOverChanges(changedFiles) {
                 console.log(lastTimestamp, "\tupdated before return");
                 return;
             }
-
-            pushRecentFile(fileId);
             const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
             notifyDriveChanges(fileId, diveChannel);
         });
@@ -91,8 +96,8 @@ async function notifyDriveChanges(fileID, diveChannel) {
                     .addFields({name: 'File Type', value: responseMessage.mimeType, inline: true})
                     .setImage(responseMessage.thumbnailLink)
                     .setTimestamp();
-
                 diveChannel.send({content: "@here", embeds: [embed]});
+                pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
             });
         })
         .catch(console.error);
@@ -156,36 +161,31 @@ async function replyWithRecentFiles(interaction) {
         });
         return;
     }
-    const selectedRecentFilesIds = recentFilesIds.slice(Math.max(-number, -recentFilesIds.length));
-    if (selectedRecentFilesIds.length > 0) {
+    const selectedRecentFilesInfo = recentFilesInfo.slice(Math.max(-number, -recentFilesInfo.length));
+    if (selectedRecentFilesInfo.length > 0) {
         const listEmbed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('Recent Files')
-            .setDescription(`Here are the ${selectedRecentFilesIds.length} most recent files:`);
+            .setDescription(`Here are the ${selectedRecentFilesInfo.length} most recent files:`);
 
-        for (const selectedFileId of selectedRecentFilesIds) {
-            await authorize()
-                .then(async (driveClient) => {
-                    await buildNotificationMessage(driveClient, selectedFileId).then((responseMessage) => {
-                        console.log("File Data = \n", responseMessage);
+        for (const selectedFileInfo of selectedRecentFilesInfo) {
+            console.log("File Data info = \n", selectedFileInfo);
 
-                        listEmbed.addFields(
-                            {
-                                name: responseMessage.name,
-                                value: `Link      :    ${responseMessage.webViewLink}\nDirectory   :    ${responseMessage.directory}\nFile Type    :    ${responseMessage.mimeType}`,
-                                inline: true
-                            }
-                        );
-
-                    });
-                })
-                .catch(console.error);
+            listEmbed.addFields(
+                {
+                    name: selectedFileInfo.name,
+                    value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
+                    inline: true
+                }
+            );
         }
+
         await interaction.reply({embeds: [listEmbed], ephemeral: true});
     } else {
         await interaction.reply({content: 'No recent files found.', ephemeral: true});
     }
 }
+
 
 async function createChannels(guild) {
     try {
@@ -209,8 +209,6 @@ setInterval(() => {
 }, 1800000);
 
 module.exports = {
-    notifyDriveChanges,
-    createChannels,
     replyWithCourseData,
     replyWithRecentFiles,
     initializeRecentFiles
