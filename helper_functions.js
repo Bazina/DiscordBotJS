@@ -180,11 +180,9 @@ async function replyWithRecentFiles(interaction) {
 
                     });
                 })
-                .then(async () => {
-                    await interaction.reply({embeds: [listEmbed], ephemeral: true});
-                })
                 .catch(console.error);
         }
+        await interaction.reply({embeds: [listEmbed], ephemeral: true});
     } else {
         await interaction.reply({content: 'No recent files found.', ephemeral: true});
     }
