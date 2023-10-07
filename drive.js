@@ -178,7 +178,6 @@ async function pullChanges(authClient, driveId, timestamp) {
     pullChangesWithLimit(authClient,driveId,timestamp,10);
 }
 async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
-    // const drive = google.drive({version: 'v3', auth: authClient});
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
     return await driveActivity.activity.query({
