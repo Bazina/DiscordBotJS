@@ -20,26 +20,30 @@ function pushRecentFile(fileId) {
         recentFilesIds.push(fileId);
     }
 }
-function isActivitiesDataEmpty(files)
-{
+
+function isActivitiesDataEmpty(files) {
     return files && files.data && files.data.activities && files.data.activities.length > 0;
 }
+
 async function initializeRecentFiles() {
-    let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents,20);
-    if (!isActivitiesDataEmpty(recentFiles))
-        return;
+    authorize().then(async (driveClient) => {
+        let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents, 20);
+        if (!isActivitiesDataEmpty(recentFiles))
+            return;
 
-    recentFiles.data.activities.forEach((activity) => {
-        console.log(activity.primaryActionDetail);
-        console.log(activity.targets);
-        activity.targets.forEach((target) => {
-            let fileId = target.driveItem.name.split('/')[1];
-            pushRecentFile(fileId);
+        recentFiles.data.activities.forEach((activity) => {
+            console.log(activity.primaryActionDetail);
+            console.log(activity.targets);
+            activity.targets.forEach((target) => {
+                let fileId = target.driveItem.name.split('/')[1];
+                pushRecentFile(fileId);
+            });
+
         });
-
     });
 
 }
+
 async function loopOverChanges(changedFiles) {
     if (!isActivitiesDataEmpty(changedFiles))
         return;
@@ -154,7 +158,7 @@ async function replyWithRecentFiles(interaction) {
     }
 
     const selectedRecentFilesIds = recentFilesIds.slice(Math.max(-number, -recentFilesIds.length));
-    if (selectedRecentFilesIds.length > 0 ) {
+    if (selectedRecentFilesIds.length > 0) {
         const listEmbed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('Recent Files')
