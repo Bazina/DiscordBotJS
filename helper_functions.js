@@ -18,7 +18,7 @@ async function loopOverChanges(changedFiles) {
                 console.log(fileId, timeStamp);
                 if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
                     lastTimestamp = currentTimestamp;
-                    console.log(lastTimestamp, "return");
+                    console.log(lastTimestamp, "\tupdated before return");
                     return;
                 }
 
@@ -29,15 +29,15 @@ async function loopOverChanges(changedFiles) {
     });
 
     lastTimestamp = currentTimestamp;
-    console.log(lastTimestamp, "out");
+    console.log(lastTimestamp, "\tupdated at the end of the call");
 }
 
 async function notifyDriveChanges(fileID, diveChannel) {
-    console.log(fileID);
+    console.log("Notifying with fileId =", fileID);
     await authorize()
         .then(async (driveClient) => {
             await buildNotificationMessage(driveClient, fileID).then((responseMessage) => {
-                console.log(responseMessage);
+                console.log("File Data = \n", responseMessage);
 
                 let embed = new EmbedBuilder()
                     .setColor(0x0099FF)
@@ -62,7 +62,7 @@ async function replyWithCourseData(interaction) {
 
     await authorize()
         .then(async (driveClient) => {
-            console.log("Authorized");
+            console.log("Authorized to get course data");
             await getFolderMetaDataById(driveClient, courseId).then((responseMessage) => {
                 console.log(responseMessage);
 
@@ -121,11 +121,11 @@ async function createChannels(guild) {
 
 setInterval(() => {
     authorize().then(async (driveClient) => {
-        console.log("Authorized", lastTimestamp);
+        console.log("Authorized to pull changes from ", lastTimestamp);
         let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp);
         await loopOverChanges(changes);
     });
-}, 60000);
+}, 1800000);
 
 module.exports = {
     notifyDriveChanges,
