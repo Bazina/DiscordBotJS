@@ -12,24 +12,24 @@ async function loopOverChanges(changedFiles) {
         console.log(activity.primaryActionDetail);
         console.log(activity.targets);
         if (activity.primaryActionDetail.create) {
-            activity.targets.forEach(async (target) => {
+            activity.targets.forEach((target) => {
                 let fileId = target.driveItem.name.split('/')[1];
                 let timeStamp = activity.timestamp;
                 console.log(fileId, timeStamp);
                 if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
                     lastTimestamp = currentTimestamp;
-                    console.log(lastTimestamp);
+                    console.log(lastTimestamp, "return");
                     return;
                 }
 
                 const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
-                await notifyDriveChanges(fileId, diveChannel);
+                notifyDriveChanges(fileId, diveChannel);
             });
         }
-
-        lastTimestamp = currentTimestamp;
-        console.log(lastTimestamp, "out");
     });
+
+    lastTimestamp = currentTimestamp;
+    console.log(lastTimestamp, "out");
 }
 
 async function notifyDriveChanges(fileID, diveChannel) {
