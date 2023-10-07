@@ -4,7 +4,8 @@ const {
     buildNotificationMessage,
     getFoldersMetaDataInFolder,
     getFolderMetaDataById,
-    pullChanges
+    pullChanges,
+    pullChangesWithLimit
 } = require("./drive")
 const maxLength = 20;
 let recentFilesIds = [];
@@ -210,5 +211,6 @@ module.exports = {
     notifyDriveChanges,
     createChannels,
     replyWithCourseData,
-    replyWithRecentFiles
+    replyWithRecentFiles,
+    initializeRecentFiles
 };

@@ -196,5 +196,6 @@ module.exports = {
     getCourseMetaDataInSpecificFoldersInDrive,
     getFoldersMetaDataInFolder,
     getFolderMetaDataById,
-    pullChanges
+    pullChanges,
+    pullChangesWithLimit
 };

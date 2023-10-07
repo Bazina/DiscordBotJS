@@ -1,4 +1,4 @@
-require('./helper_functions.js');
+const {initializeRecentFiles} = require('./helper_functions.js');
 require('./interactions.js');
 
 const keepAlive = require("./server")
