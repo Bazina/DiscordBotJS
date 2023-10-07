@@ -19,6 +19,16 @@ const rest = new REST({version: '9'}).setToken(token);
 
         const commands = [
             {
+                name: 'recent',
+                description: 'Reply with recent file uploaded',
+                options: [{
+                    name: 'number',
+                    description: 'integer how many recently uploaded files needed (max 20)',
+                    type: 4,
+                    required: true,
+                }],
+            },
+            {
                 name: 'edit_permissions',
                 description: 'Modify bot access',
                 options: [
