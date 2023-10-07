@@ -28,6 +28,18 @@ async function initializeRecentFiles() {
     if (!isActivitiesDataEmpty(recentFiles))
         return;
 
+    recentFiles.data.activities.forEach((activity) => {
+        console.log(activity.primaryActionDetail);
+        console.log(activity.targets);
+
+        activity.targets.forEach((target) => {
+            let fileId = target.driveItem.name.split('/')[1];
+            pushRecentFile(fileId);
+            const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
+            notifyDriveChanges(fileId, diveChannel);
+        });
+
+    });
 
 }
 async function loopOverChanges(changedFiles) {
