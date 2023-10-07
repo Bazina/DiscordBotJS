@@ -175,8 +175,9 @@ async function getFolderMetaDataById(authClient, folderId) {
 }
 
 async function pullChanges(authClient, driveId, timestamp) {
-    pullChangesWithLimit(authClient,driveId,timestamp,10);
+    return pullChangesWithLimit(authClient, driveId, timestamp, 10);
 }
+
 async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
