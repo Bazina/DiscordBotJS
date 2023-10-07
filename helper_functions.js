@@ -133,7 +133,7 @@ async function replyWithRecentFiles(interaction) {
     }
 
     const selectedRecentFilesIds = recentFilesIds.slice(Math.max(-number, -recentFilesIds.length));
-    if (selectedRecentFilesIds.length >= 1) {
+    if (selectedRecentFilesIds.length > 0 ) {
         const listEmbed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('Recent Files')
