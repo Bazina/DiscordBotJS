@@ -169,12 +169,10 @@ async function createChannels(guild) {
     try {
         const diveInDriveChannel = await guild.channels.create('dive-in-drive');
         const diveWithDriveChannel = await guild.channels.create('dive-with-drive');
-        const zapierChannel = await guild.channels.create('zapier');
 
         console.log('Channels created successfully');
         console.log('dive-in-drive channel ID:', diveInDriveChannel.id);
         console.log('dive-with-drive channel ID:', diveWithDriveChannel.id);
-        console.log('zapier channel ID:', zapierChannel.id);
     } catch (error) {
         console.error('Error creating channels:', error);
     }

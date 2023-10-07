@@ -1,5 +1,4 @@
 require('./helper_functions.js');
-require('./message_create.js');
 require('./interactions.js');
 
 const keepAlive = require("./server")

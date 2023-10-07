@@ -3,7 +3,6 @@ const {Client, GatewayIntentBits} = require('discord.js');
 global.token = process.env['token'];
 global.CLIENT_ID = process.env['client_id'];
 global.DRIVE_ID = process.env['drive_id'];
-global.ZAPIER_CHANNEL_ID = process.env['zapierChannelID'];
 global.DIVE_IN_DRIVE_CHANNEL_ID = process.env['diveInDriveChannelID'];
 global.DIVE_WITH_DIVE_CHANNEL_ID = process.env['diveWithDiveChannelID'];
 
