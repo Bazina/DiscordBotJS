@@ -182,7 +182,7 @@ async function pullChanges(authClient, driveId, timestamp) {
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: 10,
-            filter: `time >= "${timestamp}"`
+            filter: `time >= "${timestamp}" detail.action_detail_case:CREATE`
         }
     });
 }

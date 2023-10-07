@@ -11,21 +11,21 @@ async function loopOverChanges(changedFiles) {
     changedFiles.data.activities.forEach((activity) => {
         console.log(activity.primaryActionDetail);
         console.log(activity.targets);
-        if (activity.primaryActionDetail.create) {
-            activity.targets.forEach((target) => {
-                let fileId = target.driveItem.name.split('/')[1];
-                let timeStamp = activity.timestamp;
-                console.log(fileId, timeStamp);
-                if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
-                    lastTimestamp = currentTimestamp;
-                    console.log(lastTimestamp, "\tupdated before return");
-                    return;
-                }
 
-                const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
-                notifyDriveChanges(fileId, diveChannel);
-            });
-        }
+        activity.targets.forEach((target) => {
+            let fileId = target.driveItem.name.split('/')[1];
+            let timeStamp = activity.timestamp;
+            console.log(fileId, timeStamp);
+            if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
+                lastTimestamp = currentTimestamp;
+                console.log(lastTimestamp, "\tupdated before return");
+                return;
+            }
+
+            const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
+            notifyDriveChanges(fileId, diveChannel);
+        });
+
     });
 
     lastTimestamp = currentTimestamp;
