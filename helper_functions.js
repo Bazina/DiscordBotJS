@@ -9,7 +9,7 @@ const {
 } = require("./drive")
 const maxLength = 20;
 let recentFilesInfo = [];
-let lastTimestamp = new Date().toISOString();
+let lastTimestamp = new Date();
 let beginningOfRecents = "2023-10-06T18:31:36.657Z";
 
 function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
@@ -55,7 +55,7 @@ async function loopOverChanges(changedFiles) {
     if (!isActivitiesDataEmpty(changedFiles))
         return;
 
-    let currentTimestamp = new Date().toISOString();
+    let currentTimestamp = new Date();
 
     changedFiles.data.activities.forEach((activity) => {
         console.log(activity.primaryActionDetail);
@@ -206,7 +206,7 @@ setInterval(() => {
         let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp);
         await loopOverChanges(changes);
     });
-}, 1800000);
+}, 30000);
 
 module.exports = {
     replyWithCourseData,
