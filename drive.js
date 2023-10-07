@@ -175,13 +175,16 @@ async function getFolderMetaDataById(authClient, folderId) {
 }
 
 async function pullChanges(authClient, driveId, timestamp) {
-    const drive = google.drive({version: 'v3', auth: authClient});
+    pullChangesWithLimit(authClient,driveId,timestamp,10);
+}
+async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
+    // const drive = google.drive({version: 'v3', auth: authClient});
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
     return await driveActivity.activity.query({
         requestBody: {
             ancestorName: `items/${driveId}`,
-            pageSize: 10,
+            pageSize: pageSize,
             filter: `time >= "${timestamp}" detail.action_detail_case:CREATE`
         }
     });

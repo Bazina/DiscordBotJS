@@ -9,6 +9,7 @@ const {
 const maxLength = 20;
 let recentFilesIds = [];
 let lastTimestamp = new Date();
+let beginningOfRecents = "2023-10-06T18:31:36.657Z";
 
 function pushRecentFile(fileId) {
     if (recentFilesIds.length < maxLength)
@@ -18,9 +19,18 @@ function pushRecentFile(fileId) {
         recentFilesIds.push(fileId);
     }
 }
+function isFilesExist(files)
+{
+    return !files || !files.data || !files.data.activities || files.data.activities.length === 0;
+}
+async function initializeRecentFiles() {
+    let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents,20);
+    if (isFilesExist(recentFiles))
+        return;
 
+}
 async function loopOverChanges(changedFiles) {
-    if (!changedFiles || !changedFiles.data || !changedFiles.data.activities || changedFiles.data.activities.length === 0)
+    if (isFilesExist(changedFiles))
         return;
 
     let currentTimestamp = new Date().toISOString();
