@@ -1,6 +1,23 @@
 const {EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder} = require('discord.js');
-const {authorize, buildNotificationMessage, getFoldersMetaDataInFolder, getFolderMetaDataById, pullChanges} = require("./drive")
+const {
+    authorize,
+    buildNotificationMessage,
+    getFoldersMetaDataInFolder,
+    getFolderMetaDataById,
+    pullChanges
+} = require("./drive")
+const maxLength = 20;
+let recentFilesIds = [];
 let lastTimestamp = "2023-10-06T18:31:36.657Z";
+
+function pushRecentFile(fileId) {
+    if (recentFilesIds.length < maxLength)
+        recentFilesIds.push(fileId);
+    else {
+        recentFilesIds.shift();
+        recentFilesIds.push(fileId);
+    }
+}
 
 async function loopOverChanges(changedFiles) {
     if (!changedFiles || !changedFiles.data || !changedFiles.data.activities || changedFiles.data.activities.length === 0)
@@ -22,6 +39,7 @@ async function loopOverChanges(changedFiles) {
                 return;
             }
 
+            pushRecentFile(fileId);
             const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
             notifyDriveChanges(fileId, diveChannel);
         });
@@ -104,6 +122,49 @@ async function replyWithCourseData(interaction) {
         .catch(console.error);
 }
 
+async function replyWithRecentFiles(interaction) {
+    const number = interaction.options.getInteger('number');
+    if (number <= 0 || number > maxLength) {
+        await interaction.reply({
+            content: 'Invalid number. Please enter a value between 1 and 20.',
+            ephemeral: true
+        });
+        return;
+    }
+
+    const selectedRecentFilesIds = recentFilesIds.slice(Math.max(-number, -recentFilesIds.length));
+    if (selectedRecentFilesIds.length >= 1) {
+        const listEmbed = new EmbedBuilder()
+            .setColor(0x0099FF)
+            .setTitle('Recent Files')
+            .setDescription(`Here are the ${selectedRecentFilesIds.length} most recent files:`);
+
+        for (const selectedFileId of selectedRecentFilesIds) {
+            await authorize()
+                .then(async (driveClient) => {
+                    await buildNotificationMessage(driveClient, selectedFileId).then((responseMessage) => {
+                        console.log("File Data = \n", responseMessage);
+
+                        listEmbed.addFields(
+                            {
+                                name: responseMessage.name,
+                                value: `Link      :    ${responseMessage.webViewLink}\nDirectory   :    ${responseMessage.directory}\nFile Type    :    ${responseMessage.mimeType}`,
+                                inline: true
+                            }
+                        );
+
+                    });
+                })
+                .then(async () => {
+                    await interaction.reply({embeds: [listEmbed], ephemeral: true});
+                })
+                .catch(console.error);
+        }
+    } else {
+        await interaction.reply({content: 'No recent files found.', ephemeral: true});
+    }
+}
+
 async function createChannels(guild) {
     try {
         const diveInDriveChannel = await guild.channels.create('dive-in-drive');
@@ -130,5 +191,6 @@ setInterval(() => {
 module.exports = {
     notifyDriveChanges,
     createChannels,
-    replyWithCourseData
+    replyWithCourseData,
+    replyWithRecentFiles
 };
