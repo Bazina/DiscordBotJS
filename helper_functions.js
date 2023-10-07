@@ -19,18 +19,18 @@ function pushRecentFile(fileId) {
         recentFilesIds.push(fileId);
     }
 }
-function isFilesExist(files)
+function isActivitiesDataEmpty(files)
 {
-    return !files || !files.data || !files.data.activities || files.data.activities.length === 0;
+    return files && files.data && files.data.activities && files.data.activities.length > 0;
 }
 async function initializeRecentFiles() {
     let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents,20);
-    if (isFilesExist(recentFiles))
+    if (!isActivitiesDataEmpty(recentFiles))
         return;
 
 }
 async function loopOverChanges(changedFiles) {
-    if (isFilesExist(changedFiles))
+    if (!isActivitiesDataEmpty(changedFiles))
         return;
 
     let currentTimestamp = new Date().toISOString();
