@@ -154,7 +154,7 @@ async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
     if (number <= 0 || number > maxLength) {
         await interaction.reply({
-            content: 'Invalid number. Please enter a value between 1 and 21.',
+            content: 'Invalid number. Please enter a value between 1 and ${maxLength}.',
             ephemeral: true
         });
         return;
