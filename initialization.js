@@ -68,7 +68,7 @@ const rest = new REST({version: '9'}).setToken(token);
                     description: 'Course name',
                     type: 3,
                     required: true,
-                    choices: choices.slice(Math.max(-25, -choices.length))
+                    choices: choices.slice(Math.max(-25, -choices.length)).reverse()
                 }]
             }
         ];
