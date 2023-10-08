@@ -18,12 +18,10 @@ function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
     responseDict.mimeType = responseMessage.mimeType;
     responseDict.directory = responseMessage.directory;
     responseDict.webViewLink = responseMessage.webViewLink;
-    if (recentFilesInfo.length < maxLength)
-        recentFilesInfo.push(responseDict);
-    else {
-        recentFilesInfo.shift();
-        recentFilesInfo.push(responseDict);
+    if (recentFilesInfo.length > maxLength) {
+        recentFilesInfo.pop();
     }
+    recentFilesInfo.unshift(responseDict);
 }
 
 function isActivitiesDataEmpty(files) {
