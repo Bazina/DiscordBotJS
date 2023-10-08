@@ -9,7 +9,7 @@ const {
 } = require("./drive")
 const maxLength = 21;
 let recentFilesInfo = [];
-let lastTimestamp = new Date().toISOString();
+let lastTimestamp = new Date();
 let beginningOfRecents = "2023-10-06T18:31:36.657Z";
 
 function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
@@ -27,13 +27,13 @@ function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
 }
 
 function isActivitiesDataEmpty(files) {
-    return files && files.data && files.data.activities && files.data.activities.length > 0;
+    return !files || !files.data || !files.data.activities || files.data.activities.length < 0;
 }
 
 async function initializeRecentFiles() {
     authorize().then(async (driveClient) => {
         let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents, 20);
-        if (!isActivitiesDataEmpty(recentFiles))
+        if (isActivitiesDataEmpty(recentFiles))
             return;
 
         recentFiles.data.activities.forEach((activity) => {
@@ -52,10 +52,10 @@ async function initializeRecentFiles() {
 }
 
 async function loopOverChanges(changedFiles) {
-    if (!isActivitiesDataEmpty(changedFiles))
+    if (isActivitiesDataEmpty(changedFiles))
         return;
 
-    let currentTimestamp = new Date().toISOString();
+    let currentTimestamp = new Date();
 
     changedFiles.data.activities.forEach((activity) => {
         console.log(activity.primaryActionDetail);
@@ -202,10 +202,10 @@ async function createChannels(guild) {
 setInterval(() => {
     authorize().then(async (driveClient) => {
         console.log("Authorized to pull changes from ", lastTimestamp);
-        let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp);
+        let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
         await loopOverChanges(changes);
     });
-}, 1800000);
+}, 90000);
 
 module.exports = {
     replyWithCourseData,
