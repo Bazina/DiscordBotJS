@@ -16,10 +16,10 @@ global.client = new Client({
 
 client.once('ready', () => {
     global.GUILD_ID = client.guilds.cache.first().id;
+    require('./initialization.js');
 });
 
 client.on('guildCreate', (guild) => {
     console.log(`The bot has joined the guild: ${guild.name} (ID: ${guild.id})`);
-
     require('./initialization.js');
 });
