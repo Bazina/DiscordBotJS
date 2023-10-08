@@ -23,7 +23,7 @@ const rest = new REST({version: '9'}).setToken(token);
                 description: 'Reply with recent file uploaded',
                 options: [{
                     name: 'number',
-                    description: 'integer how many recently uploaded files needed (max 20)',
+                    description: 'integer how many recently uploaded files needed (max 21)',
                     type: 4,
                     required: true,
                 }],
