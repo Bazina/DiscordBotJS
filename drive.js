@@ -62,6 +62,15 @@ async function authorize() {
     return client;
 }
 
+function BuildRealLinkIfShortcut(fileMetaData) {
+    if (fileMetaData.data.mimeType === "application/vnd.google-apps.shortcut") {
+        if (fileMetaData.data.shortcutDetails.targetMimeType === "application/vnd.google-apps.folder") {
+            fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace("file/", "folder/");
+            fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace(fileMetaData.data.id, fileMetaData.data.shortcutDetails.targetId);
+        }
+    }
+}
+
 /**
  * Lists the names and IDs of up to 10 files.
  * @param {OAuth2Client} authClient An authorized OAuth2 client.
@@ -98,6 +107,8 @@ async function buildNotificationMessage(authClient, newFileId) {
             fileParentId = parentMetaData.data.parents[0];
         }
     }
+
+    BuildRealLinkIfShortcut(fileMetaData);
 
     message = fileMetaData.data;
     message['directory'] = fileParentsNames.reverse().join(" -> ");
