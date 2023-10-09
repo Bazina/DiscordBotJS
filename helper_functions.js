@@ -10,7 +10,7 @@ const {
 const maxLength = 21;
 let recentFilesInfo = [];
 let lastTimestamp = new Date();
-let beginningOfRecents = "2023-10-06T18:31:36.657Z";
+let beginningOfRecents = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
 function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
     const responseDict = {};
