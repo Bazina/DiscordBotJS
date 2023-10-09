@@ -71,7 +71,7 @@ function buildRealLinkIfShortcut(fileMetaData) {
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace(fileMetaData.data.id, fileMetaData.data.shortcutDetails.targetId);
         }
 
-        fileMetaData.data.mimeType = fileMetaData.data.shortcutDetails.mimeType;
+        fileMetaData.data.mimeType = fileMetaData.data.shortcutDetails.targetMimeType;
         fileMetaData.data.id = fileMetaData.data.shortcutDetails.targetId;
     }
 
