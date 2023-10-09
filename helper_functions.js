@@ -159,7 +159,7 @@ async function replyWithRecentFiles(interaction) {
         });
         return;
     }
-    const selectedRecentFilesInfo = recentFilesInfo.slice(Math.max(-number, -recentFilesInfo.length));
+    const selectedRecentFilesInfo = recentFilesInfo.slice(0,Math.min(number, recentFilesInfo.length));
     if (selectedRecentFilesInfo.length > 0) {
         const listEmbed = new EmbedBuilder()
             .setColor(0x0099FF)
