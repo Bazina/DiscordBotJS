@@ -67,13 +67,13 @@ function buildRealLinkIfShortcut(fileMetaData) {
         if (fileMetaData.data.shortcutDetails.targetMimeType === "application/vnd.google-apps.folder") {
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace("file/", "folder/");
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace(fileMetaData.data.id, fileMetaData.data.shortcutDetails.targetId);
+            fileMetaData.data.iconLink = 'https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.folder'
         } else {
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace(fileMetaData.data.id, fileMetaData.data.shortcutDetails.targetId);
         }
 
         fileMetaData.data.mimeType = fileMetaData.data.shortcutDetails.targetMimeType;
         fileMetaData.data.id = fileMetaData.data.shortcutDetails.targetId;
-        fileMetaData.data.iconLink = 'https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.folder'
     }
 
     return fileMetaData.data;
