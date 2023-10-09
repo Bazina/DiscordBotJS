@@ -63,6 +63,7 @@ async function authorize() {
 }
 
 function buildRealLinkIfShortcut(fileMetaData) {
+    console.log(fileMetaData.data);
     if (fileMetaData.data.mimeType === "application/vnd.google-apps.shortcut") {
         if (fileMetaData.data.shortcutDetails.targetMimeType === "application/vnd.google-apps.folder") {
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace("file/", "folder/");
