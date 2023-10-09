@@ -62,13 +62,21 @@ async function authorize() {
     return client;
 }
 
-function BuildRealLinkIfShortcut(fileMetaData) {
+function buildRealLinkIfShortcut(fileMetaData) {
     if (fileMetaData.data.mimeType === "application/vnd.google-apps.shortcut") {
         if (fileMetaData.data.shortcutDetails.targetMimeType === "application/vnd.google-apps.folder") {
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace("file/", "folder/");
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace(fileMetaData.data.id, fileMetaData.data.shortcutDetails.targetId);
+        } else {
+            fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace(fileMetaData.data.id, fileMetaData.data.shortcutDetails.targetId);
         }
+
+        fileMetaData.data.id = fileMetaData.data.shortcutDetails.targetId;
     }
+
+    console.log(fileMetaData.data);
+
+    return fileMetaData.data;
 }
 
 /**
@@ -83,7 +91,7 @@ async function buildNotificationMessage(authClient, newFileId) {
 
     const fileMetaData = await drive.files.get({
         fileId: newFileId,
-        fields: "id, name, mimeType, parents, webViewLink, iconLink, thumbnailLink"
+        fields: "id, name, mimeType, parents, webViewLink, iconLink, thumbnailLink, shortcutDetails"
     });
 
     if (fileMetaData.data.parents.length === 0)
@@ -108,7 +116,8 @@ async function buildNotificationMessage(authClient, newFileId) {
         }
     }
 
-    BuildRealLinkIfShortcut(fileMetaData);
+    if (fileMetaData.data.shortcutDetails)
+        fileMetaData.data = buildRealLinkIfShortcut(fileMetaData);
 
     message = fileMetaData.data;
     message['directory'] = fileParentsNames.reverse().join(" -> ");
