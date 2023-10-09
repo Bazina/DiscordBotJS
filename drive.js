@@ -63,7 +63,6 @@ async function authorize() {
 }
 
 function buildRealLinkIfShortcut(fileMetaData) {
-    console.log(fileMetaData.data);
     if (fileMetaData.data.mimeType === "application/vnd.google-apps.shortcut") {
         if (fileMetaData.data.shortcutDetails.targetMimeType === "application/vnd.google-apps.folder") {
             fileMetaData.data.webViewLink = fileMetaData.data.webViewLink.replace("file/", "folder/");
@@ -88,7 +87,7 @@ async function buildNotificationMessage(authClient, newFileId) {
 
     const fileMetaData = await drive.files.get({
         fileId: newFileId,
-        fields: "id, name, mimeType, parents, webViewLink, iconLink, thumbnailLink"
+        fields: "id, name, mimeType, parents, webViewLink, iconLink, thumbnailLink, shortcutDetails"
     });
 
     if (fileMetaData.data.parents.length === 0)
