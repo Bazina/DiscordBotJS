@@ -73,6 +73,7 @@ function buildRealLinkIfShortcut(fileMetaData) {
 
         fileMetaData.data.mimeType = fileMetaData.data.shortcutDetails.targetMimeType;
         fileMetaData.data.id = fileMetaData.data.shortcutDetails.targetId;
+        fileMetaData.data.iconLink = 'https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.folder'
     }
 
     return fileMetaData.data;
