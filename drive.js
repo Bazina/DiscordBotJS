@@ -73,6 +73,10 @@ function buildRealLinkIfShortcut(fileMetaData) {
 
         fileMetaData.data.id = fileMetaData.data.shortcutDetails.targetId;
     }
+
+    console.log(fileMetaData.data);
+
+    return fileMetaData.data;
 }
 
 /**
@@ -113,7 +117,7 @@ async function buildNotificationMessage(authClient, newFileId) {
     }
 
     if (fileMetaData.data.shortcutDetails)
-        buildRealLinkIfShortcut(fileMetaData);
+        fileMetaData.data = buildRealLinkIfShortcut(fileMetaData);
 
     message = fileMetaData.data;
     message['directory'] = fileParentsNames.reverse().join(" -> ");
