@@ -112,8 +112,9 @@ async function buildNotificationMessage(authClient, newFileId) {
             break;
         else {
             console.log("------------------------Parent Name = ", parentName)
+            console.log("------------------------Parent Parents = ", parentMetaData.data.parents)
+            console.log("------------------------Parent Id = ", parentMetaData.data.id)
             //console.log(fileMetaData)
-            console.log(parentName)
             fileParentsNames.push(parentName);
             fileParentId = parentMetaData.data.parents[0];
         }
