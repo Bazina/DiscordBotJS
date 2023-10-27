@@ -108,7 +108,7 @@ async function buildNotificationMessage(authClient, newFileId) {
         const regex = /([0-9][a-z]+\s\w+)/g;
         let parentName = parentMetaData.data.name;
 
-        if (parentMetaData.data.parents.length <= 0 || regex.test(parentName) || parentName === "My Drive" || fileParentsNames.length > 5)
+        if (!parentMetaData.data.parents || regex.test(parentName) || parentName === "My Drive" || fileParentsNames.length > 5)
             break;
         else {
             fileParentsNames.push(parentName);
