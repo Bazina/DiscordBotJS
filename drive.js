@@ -111,6 +111,9 @@ async function buildNotificationMessage(authClient, newFileId) {
         if (regex.test(parentName) || parentName === "My Drive" || fileParentsNames.length > 5)
             break;
         else {
+            console.log("Parent Name = ", parentName)
+            console.log(fileMetaData)
+            console.log(parentName)
             fileParentsNames.push(parentName);
             fileParentId = parentMetaData.data.parents[0];
         }
