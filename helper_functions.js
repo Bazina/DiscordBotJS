@@ -31,7 +31,6 @@ function isActivitiesDataEmpty(files) {
 }
 
 async function initializeRecentFiles() {
-    return;
     authorize().then(async (driveClient) => {
         let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents, 20);
         if (isActivitiesDataEmpty(recentFiles))

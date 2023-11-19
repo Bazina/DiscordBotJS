@@ -12,8 +12,7 @@ client.on('ready', () => {
     if (dive_channel) {
         console.log('Bot is back online!');
         console.log('getting recent files');
-        initializeRecentFiles()
-
+        //initializeRecentFiles()
     } else {
         console.log('Channel not found!');
     }
