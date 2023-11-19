@@ -110,7 +110,7 @@ async function replyWithCourseData(interaction) {
 
     await authorize()
         .then(async (driveClient) => {
-            console.log("get course data called =" + (++getCourseDataCallsStats));
+            console.log("get course data called = " + (++getCourseDataCallsStats));
             console.log("Authorized to get course data");
             await getFolderMetaDataById(driveClient, courseId).then((responseMessage) => {
                 console.log(responseMessage);
@@ -155,7 +155,7 @@ async function replyWithCourseData(interaction) {
 
 async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
-    console.log("get recent data called =" + (++getRecentDataCallsStats));
+    console.log("get recent data called = " + (++getRecentDataCallsStats));
 
     if (number <= 0 || number > maxLength) {
         await interaction.reply({
