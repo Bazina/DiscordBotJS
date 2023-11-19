@@ -10,7 +10,7 @@ const {
 const maxLength = 21;
 let recentFilesInfo = [];
 let lastTimestamp = new Date();
-let beginningOfRecents = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+let beginningOfRecents = new Date(Date.now() - 1).toISOString();
 let getCourseDataCallsStats= 0;
 let getRecentDataCallsStats= 0;
 
