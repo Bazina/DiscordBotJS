@@ -155,7 +155,7 @@ async function replyWithCourseData(interaction) {
 
 async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
-    console.log("get course data called =" + (getRecentDataCallsStats++));
+    console.log("get recent data called =" + (getRecentDataCallsStats++));
 
     if (number <= 0 || number > maxLength) {
         await interaction.reply({
