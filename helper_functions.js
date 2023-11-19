@@ -11,6 +11,8 @@ const maxLength = 21;
 let recentFilesInfo = [];
 let lastTimestamp = new Date();
 let beginningOfRecents = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+let getCourseDataCallsStats= 0;
+let getRecentDataCallsStats= 0;
 
 function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
     const responseDict = {};
@@ -108,6 +110,7 @@ async function replyWithCourseData(interaction) {
 
     await authorize()
         .then(async (driveClient) => {
+            console.log("get course data called =" + (getCourseDataCallsStats++));
             console.log("Authorized to get course data");
             await getFolderMetaDataById(driveClient, courseId).then((responseMessage) => {
                 console.log(responseMessage);
@@ -152,6 +155,8 @@ async function replyWithCourseData(interaction) {
 
 async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
+    console.log("get course data called =" + (getRecentDataCallsStats++));
+
     if (number <= 0 || number > maxLength) {
         await interaction.reply({
             content: 'Invalid number. Please enter a value between 1 and ${maxLength}.',
