@@ -115,7 +115,7 @@ async function replyWithCourseData(interaction) {
         .then(async (driveClient) => {
             console.log("get course data called = " + (++getCourseDataCallsStats));
             console.log("Authorized to get course data");
-            await getFolderMetaDataById(driveClient, courseId).then((responseMessage) => {
+            await getMetaDataById(driveClient, courseId).then((responseMessage) => {
                 console.log(responseMessage);
 
                 embed.setColor(0x0099FF)
