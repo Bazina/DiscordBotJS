@@ -11,8 +11,8 @@ const maxLength = 21;
 let recentFilesInfo = [];
 let lastTimestamp = new Date();
 let beginningOfRecent = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-let getCourseDataCallsStats= 0;
-let getRecentDataCallsStats= 0;
+let getCourseDataCallsStats = 0;
+let getRecentDataCallsStats = 0;
 
 function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
     const responseDict = {};
@@ -164,19 +164,21 @@ async function replyWithRecentFiles(interaction) {
     }
 
     let selectedRecentFilesInfo = [];
-    for (const recentFileInfo of recentFilesInfo) {
-        if (selectedRecentFilesInfo.length === number)
-            break;
+    console.log("Recent Files Info = \n", recentFilesInfo);
 
-        await authorize()
-            .then(async (driveClient) => {
+    await authorize()
+        .then(async (driveClient) => {
+            for (const recentFileInfo of recentFilesInfo) {
+                if (selectedRecentFilesInfo.length === number)
+                    break;
                 await getMetaDataById(driveClient, recentFileInfo.id).then((responseMessage) => {
                     if (!responseMessage.trashed)
                         selectedRecentFilesInfo.push(responseMessage);
                 });
-            })
-            .catch(console.error);
-    }
+            }
+        })
+        .catch(console.error);
+
 
     if (selectedRecentFilesInfo.length > 0) {
         const listEmbed = new EmbedBuilder()
