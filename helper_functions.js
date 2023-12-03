@@ -3,7 +3,7 @@ const {
     authorize,
     buildNotificationMessage,
     getFoldersMetaDataInFolder,
-    getFolderMetaDataById,
+    getMetaDataById,
     pullChanges,
     pullChangesWithLimit
 } = require("./drive")
@@ -19,6 +19,7 @@ function isActivitiesDataEmpty(files) {
 
 async function buildRecentFiles() {
     let selectedRecentFilesInfo = [];
+    let filteredActivities = [];
 
     authorize().then(async (driveClient) => {
         let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
@@ -32,6 +33,20 @@ async function buildRecentFiles() {
                 let fileId = target.driveItem.name.split('/')[1];
                 await buildNotificationMessage(driveClient, fileId).then((responseMessage) => {
                     selectedRecentFilesInfo.push(responseMessage);
+                });
+            });
+        });
+
+        filteredActivities = selectedRecentFilesInfo;
+
+        selectedRecentFilesInfo.data.activities.forEach((activity) => {
+            activity.targets.forEach(async (target) => {
+                let fileId = target.driveItem.name.split('/')[1];
+                await getMetaDataById(driveClient, fileId).then((fileMetaData) => {
+                    if (fileMetaData.trashed) {
+                        let fileIndex = filteredActivities.data.activities.indexOf(activity);
+                        filteredActivities.data.activities.splice(fileIndex, 1);
+                    }
                 });
             });
         });

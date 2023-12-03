@@ -201,29 +201,13 @@ async function pullChanges(authClient, driveId, timestamp) {
 async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
-    let response = await driveActivity.activity.query({
+    return driveActivity.activity.query({
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: pageSize,
             filter: `time >= "${timestamp}" detail.action_detail_case:CREATE`
         }
     });
-
-    let filteredActivities = response;
-
-    response.data.activities.forEach((activity) => {
-        activity.targets.forEach((target) => {
-            let fileId = target.driveItem.name.split('/')[1];
-            getMetaDataById(authClient, fileId).then((fileMetaData) => {
-                if (fileMetaData.trashed) {
-                    let fileIndex = filteredActivities.data.activities.indexOf(activity);
-                    filteredActivities.data.activities.splice(fileIndex, 1);
-                }
-            });
-        });
-    });
-
-    return filteredActivities;
 }
 
 module.exports = {
@@ -231,7 +215,7 @@ module.exports = {
     buildNotificationMessage,
     getCourseMetaDataInSpecificFoldersInDrive,
     getFoldersMetaDataInFolder,
-    getFolderMetaDataById: getMetaDataById,
+    getMetaDataById,
     pullChanges,
     pullChangesWithLimit
 };
