@@ -9,7 +9,7 @@ const {
 } = require("./drive")
 const maxLength = 21;
 let lastTimestamp = new Date();
-let beginningOfRecent = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+let beginningOfRecent = new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString();
 let getCourseDataCallsStats= 0;
 let getRecentDataCallsStats= 0;
 
@@ -153,7 +153,8 @@ async function replyWithRecentFiles(interaction) {
         return;
     }
 
-    let selectedRecentFilesInfo = buildRecentFiles().slice(0,Math.min(number, selectedRecentFilesInfo.length));
+    let selectedRecentFilesInfo = buildRecentFiles();
+    selectedRecentFilesInfo = selectedRecentFilesInfo.slice(0,Math.min(number, selectedRecentFilesInfo.length));
 
     if (selectedRecentFilesInfo.length > 0) {
         const listEmbed = new EmbedBuilder()
@@ -202,6 +203,5 @@ setInterval(() => {
 
 module.exports = {
     replyWithCourseData,
-    replyWithRecentFiles,
-    initializeRecentFiles
+    replyWithRecentFiles
 };
