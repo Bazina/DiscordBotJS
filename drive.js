@@ -183,7 +183,7 @@ async function getFoldersMetaDataInFolder(authClient, folderId) {
     return folderChildren.data.files;
 }
 
-async function getFolderMetaDataById(authClient, folderId) {
+async function getMetaDataById(authClient, folderId) {
     const drive = google.drive({version: 'v3', auth: authClient});
 
     const folderMetaData = await drive.files.get({
@@ -201,13 +201,29 @@ async function pullChanges(authClient, driveId, timestamp) {
 async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
-    return driveActivity.activity.query({
+    let response = await driveActivity.activity.query({
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: pageSize,
             filter: `time >= "${timestamp}" detail.action_detail_case:CREATE`
         }
     });
+
+    let filteredActivities = response;
+
+    response.data.activities.forEach((activity) => {
+        activity.targets.forEach((target) => {
+            let fileId = target.driveItem.name.split('/')[1];
+            getMetaDataById(authClient, fileId).then((fileMetaData) => {
+                if (fileMetaData.trashed) {
+                    let fileIndex = filteredActivities.data.activities.indexOf(activity);
+                    filteredActivities.data.activities.splice(fileIndex, 1);
+                }
+            });
+        });
+    });
+
+    return filteredActivities;
 }
 
 module.exports = {
@@ -215,7 +231,7 @@ module.exports = {
     buildNotificationMessage,
     getCourseMetaDataInSpecificFoldersInDrive,
     getFoldersMetaDataInFolder,
-    getFolderMetaDataById,
+    getFolderMetaDataById: getMetaDataById,
     pullChanges,
     pullChangesWithLimit
 };
