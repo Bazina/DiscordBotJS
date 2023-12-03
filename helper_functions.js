@@ -174,11 +174,19 @@ async function replyWithRecentFiles(interaction) {
                 await getMetaDataById(driveClient, recentFileInfo.id).then((responseMessage) => {
                     if (!responseMessage.trashed)
                         selectedRecentFilesInfo.push(responseMessage);
+                    else {
+                        console.log("File is trashed");
+                        // remove this file from recentFilesInfo
+                        recentFilesInfo = recentFilesInfo.filter((fileInfo) => {
+                            return fileInfo.id !== responseMessage.id;
+                        });
+                    }
                 });
             }
         })
         .catch(console.error);
 
+    console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
 
     if (selectedRecentFilesInfo.length > 0) {
         const listEmbed = new EmbedBuilder()
