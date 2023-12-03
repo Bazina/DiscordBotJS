@@ -3,14 +3,14 @@ const {
     authorize,
     buildNotificationMessage,
     getFoldersMetaDataInFolder,
-    getFolderMetaDataById,
+    getMetaDataById,
     pullChanges,
     pullChangesWithLimit
 } = require("./drive")
 const maxLength = 21;
 let recentFilesInfo = [];
 let lastTimestamp = new Date();
-let beginningOfRecents = new Date(Date.now() - 1).toISOString();
+let beginningOfRecent = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 let getCourseDataCallsStats= 0;
 let getRecentDataCallsStats= 0;
 
@@ -32,7 +32,7 @@ function isActivitiesDataEmpty(files) {
 
 async function initializeRecentFiles() {
     authorize().then(async (driveClient) => {
-        let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecents, 20);
+        let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
         if (isActivitiesDataEmpty(recentFiles))
             return;
 
@@ -110,7 +110,7 @@ async function replyWithCourseData(interaction) {
         .then(async (driveClient) => {
             console.log("get course data called = " + (++getCourseDataCallsStats));
             console.log("Authorized to get course data");
-            await getFolderMetaDataById(driveClient, courseId).then((responseMessage) => {
+            await getMetaDataById(driveClient, courseId).then((responseMessage) => {
                 console.log(responseMessage);
 
                 embed.setColor(0x0099FF)
@@ -162,7 +162,22 @@ async function replyWithRecentFiles(interaction) {
         });
         return;
     }
-    const selectedRecentFilesInfo = recentFilesInfo.slice(0,Math.min(number, recentFilesInfo.length));
+
+    let selectedRecentFilesInfo = [];
+    for (const recentFileInfo of recentFilesInfo) {
+        if (selectedRecentFilesInfo.length === number)
+            break;
+
+        await authorize()
+            .then(async (driveClient) => {
+                await getMetaDataById(driveClient, recentFileInfo.id).then((responseMessage) => {
+                    if (!responseMessage.trashed)
+                        selectedRecentFilesInfo.push(responseMessage);
+                });
+            })
+            .catch(console.error);
+    }
+
     if (selectedRecentFilesInfo.length > 0) {
         const listEmbed = new EmbedBuilder()
             .setColor(0x0099FF)

@@ -183,7 +183,7 @@ async function getFoldersMetaDataInFolder(authClient, folderId) {
     return folderChildren.data.files;
 }
 
-async function getFolderMetaDataById(authClient, folderId) {
+async function getMetaDataById(authClient, folderId) {
     const drive = google.drive({version: 'v3', auth: authClient});
 
     const folderMetaData = await drive.files.get({
@@ -215,7 +215,7 @@ module.exports = {
     buildNotificationMessage,
     getCourseMetaDataInSpecificFoldersInDrive,
     getFoldersMetaDataInFolder,
-    getFolderMetaDataById,
+    getMetaDataById,
     pullChanges,
     pullChangesWithLimit
 };
