@@ -168,7 +168,7 @@ async function replyWithRecentFiles(interaction) {
         return;
     }
 
-    let selectedRecentFilesInfo = buildRecentFiles();
+    let selectedRecentFilesInfo = await buildRecentFiles();
     selectedRecentFilesInfo = selectedRecentFilesInfo.slice(0,Math.min(number, selectedRecentFilesInfo.length));
 
     if (selectedRecentFilesInfo.length > 0) {
