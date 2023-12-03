@@ -17,6 +17,7 @@ let getRecentDataCallsStats = 0;
 function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
     const responseDict = {};
     responseDict.name = responseMessage.name;
+    responseDict.id = responseMessage.id;
     responseDict.mimeType = responseMessage.mimeType;
     responseDict.directory = responseMessage.directory;
     responseDict.webViewLink = responseMessage.webViewLink;
