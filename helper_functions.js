@@ -49,6 +49,7 @@ async function initializeRecentFiles() {
         });
 
         recentFiles.data.activities.forEach((activity) => {
+            console.log("initializing recent files");
             console.log(activity.primaryActionDetail);
             console.log(activity.targets);
             activity.targets.forEach(async (target) => {
@@ -68,6 +69,7 @@ async function loopOverChanges(changedFiles) {
     let currentTimestamp = new Date();
 
     changedFiles.data.activities.forEach((activity) => {
+        console.log("looping over changes");
         console.log(activity.primaryActionDetail);
         console.log(activity.targets);
 
