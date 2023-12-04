@@ -66,7 +66,7 @@ async function initializeRecentFiles() {
 async function loopOverChanges(changedFiles ,callTimeStamps) {
     let currentTimestamp = callTimeStamps;
 
-    if (!changedFiles || !changedFiles.data || !changedFiles.data.activities) {
+    if (isActivitiesDataEmpty(changedFiles)) {
         console.warn("Note could be due to no updates found anyways: \n Invalid or missing data structure in changedFiles:", changedFiles);
 
         lastTimestamp = currentTimestamp;
@@ -85,8 +85,7 @@ async function loopOverChanges(changedFiles ,callTimeStamps) {
             let timeStamp = activity.timestamp;
             console.log(fileId, timeStamp);
             if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
-                lastTimestamp = currentTimestamp;
-                console.log(lastTimestamp, "\ttime stamp updated before return");
+                console.warn("this file id should have been notified before: ", fileId);
                 return;
             }
             const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
