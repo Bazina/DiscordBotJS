@@ -67,7 +67,7 @@ async function loopOverChanges(changedFiles ,callTimeStamps) {
     let currentTimestamp = callTimeStamps;
 
     if (!changedFiles || !changedFiles.data || !changedFiles.data.activities) {
-        console.error("Invalid or missing data structure in changedFiles:", changedFiles);
+        console.warn("Note could be due to no updates found anyways: \n Invalid or missing data structure in changedFiles:", changedFiles);
 
         lastTimestamp = currentTimestamp;
         console.log(lastTimestamp, "\ttime stamp updated at with no changed files");
