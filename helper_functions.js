@@ -88,7 +88,7 @@ async function loopOverChanges(changedFiles ,callTimeStamps) {
     let currentTimestamp = callTimeStamps;
 
     if (isActivitiesDataEmpty(changedFiles)) {
-        console.warn("Note could be due to no updates found anyways: \n Invalid or missing data structure in changedFiles:",findMissingData(changedFiles) );
+        console.warn("Invalid or missing data structure in changedFiles: ",findMissingData(changedFiles),"\nNote could be due to no updates found anyway");
 
         lastTimestamp = currentTimestamp;
         console.log(lastTimestamp, "\ttime stamp updated at with no changed files");
