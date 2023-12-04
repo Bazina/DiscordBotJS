@@ -188,16 +188,22 @@ async function replyWithRecentFiles(interaction) {
     console.log("Recent Files Info = \n", recentFilesInfo);
 
     try {
-        const filteredRecentFiles = await Promise.all(recentFilesInfo.map(async (recentFileInfo) => {
-            const responseMessage = await getMetaDataById(driveClient, recentFileInfo.id);
-            if (!responseMessage.trashed) {
-                console.log("File Data Trashed = \n", responseMessage.trashed);
-                return true;
-            }
-            return false;
-        }));
+        await authorize()
+            .then(async (driveClient) => {
+                const filterResults = await Promise.all(recentFilesInfo.map(async (recentFileInfo) => {
+                    const responseMessage = await getMetaDataById(driveClient, recentFileInfo.id);
+                    if (!responseMessage.trashed) {
+                        console.log("File Data Trashed = \n", responseMessage.trashed);
+                        return true;
+                    }
+                    return false;
+                }));
 
-        recentFilesInfo = recentFilesInfo.filter((_, index) => filteredRecentFiles[index]);
+                recentFilesInfo = recentFilesInfo.filter((_, index) => filterResults[index]);
+            })
+            .catch((error) => {
+                console.error("Error during authorization:", error);
+            });
 
         let selectedRecentFilesInfo = recentFilesInfo.slice(0, Math.min(number, recentFilesInfo.length));
         console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
