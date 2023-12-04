@@ -173,14 +173,13 @@ async function replyWithCourseData(interaction) {
         })
         .catch(console.error);
 }
-
 async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
     console.log("get recent data called = " + (++getRecentDataCallsStats));
 
     if (number <= 0 || number > maxLength) {
         await interaction.reply({
-            content: 'Invalid number. Please enter a value between 1 and ${maxLength}.',
+            content: `Invalid number. Please enter a value between 1 and ${maxLength}.`,
             ephemeral: true
         });
         return;
@@ -188,42 +187,45 @@ async function replyWithRecentFiles(interaction) {
 
     console.log("Recent Files Info = \n", recentFilesInfo);
 
-    await authorize()
-        .then(async (driveClient) => {
-            recentFilesInfo = recentFilesInfo.filter(async (recentFileInfo) => {
-                await getMetaDataById(driveClient, recentFileInfo.id).then((responseMessage) => {
-                    if (!responseMessage.trashed) {
-                        console.log("File Data Trashed = \n", responseMessage.trashed);
-                        return true;
+    try {
+        const filteredRecentFiles = await Promise.all(recentFilesInfo.map(async (recentFileInfo) => {
+            const responseMessage = await getMetaDataById(driveClient, recentFileInfo.id);
+            if (!responseMessage.trashed) {
+                console.log("File Data Trashed = \n", responseMessage.trashed);
+                return true;
+            }
+            return false;
+        }));
+
+        recentFilesInfo = recentFilesInfo.filter((_, index) => filteredRecentFiles[index]);
+
+        let selectedRecentFilesInfo = recentFilesInfo.slice(0, Math.min(number, recentFilesInfo.length));
+        console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
+
+        if (selectedRecentFilesInfo.length > 0) {
+            const listEmbed = new EmbedBuilder()
+                .setColor(0x0099FF)
+                .setTitle('Recent Files')
+                .setDescription(`Here are the ${selectedRecentFilesInfo.length} most recent files:`);
+
+            for (const selectedFileInfo of selectedRecentFilesInfo) {
+                console.log("File Data info = \n", selectedFileInfo);
+                listEmbed.addFields(
+                    {
+                        name: selectedFileInfo.name,
+                        value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
+                        inline: true
                     }
-                });
-            });
-        })
-        .catch(console.error);
+                );
+            }
 
-    let selectedRecentFilesInfo = recentFilesInfo.slice(0, Math.min(number, recentFilesInfo.length));
-    console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
-
-    if (selectedRecentFilesInfo.length > 0) {
-        const listEmbed = new EmbedBuilder()
-            .setColor(0x0099FF)
-            .setTitle('Recent Files')
-            .setDescription(`Here are the ${selectedRecentFilesInfo.length} most recent files:`);
-
-        for (const selectedFileInfo of selectedRecentFilesInfo) {
-            console.log("File Data info = \n", selectedFileInfo);
-            listEmbed.addFields(
-                {
-                    name: selectedFileInfo.name,
-                    value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
-                    inline: true
-                }
-            );
+            await interaction.reply({embeds: [listEmbed], ephemeral: true});
+        } else {
+            await interaction.reply({content: 'No recent files found.', ephemeral: true});
         }
-
-        await interaction.reply({embeds: [listEmbed], ephemeral: true});
-    } else {
-        await interaction.reply({content: 'No recent files found.', ephemeral: true});
+    } catch (error) {
+        console.error("Error filtering recent files:", error);
+        await interaction.reply({content: 'An error occurred while fetching recent files.', ephemeral: true});
     }
 }
 
