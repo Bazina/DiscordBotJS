@@ -239,7 +239,7 @@ setInterval(() => {
         let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
         await loopOverChanges(changes);
     });
-}, 60000);
+}, 180000);
 
 module.exports = {
     replyWithCourseData,
