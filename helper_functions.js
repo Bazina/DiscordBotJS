@@ -182,7 +182,7 @@ async function replyWithRecentFiles(interaction) {
 
     await authorize()
         .then(async (driveClient) => {
-            recentFilesInfo.filter(async (recentFileInfo) => {
+            recentFilesInfo = recentFilesInfo.filter(async (recentFileInfo) => {
                 await getMetaDataById(driveClient, recentFileInfo.id).then((responseMessage) => {
                     if (!responseMessage.trashed)
                         return true;
