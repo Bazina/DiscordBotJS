@@ -85,7 +85,7 @@ async function loopOverChanges(changedFiles ,callTimeStamps) {
             let timeStamp = activity.timestamp;
             console.log(fileId, timeStamp);
             if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
-                console.warn("this file id should have been notified before: ", fileId);
+                console.warn("this file id :", fileId," should have been notified before ");
                 return;
             }
             const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
