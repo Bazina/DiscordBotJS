@@ -30,13 +30,34 @@ function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
 function isActivitiesDataEmpty(files) {
     return !files || !files.data || !files.data.activities || files.data.activities.length < 0;
 }
+function findMissingData(files) {
+    const missingData = [];
+
+    if (!files) {
+        missingData.push("files");
+    } else {
+        if (!files.data) {
+            missingData.push("files.data");
+        } else {
+            if (!files.data.activities) {
+                missingData.push("files.data.activities");
+            } else if (files.data.activities.length === 0) {
+                missingData.push("files.data.activities (empty)");
+            }
+        }
+    }
+
+    return missingData;
+}
+
 
 async function initializeRecentFiles() {
     authorize().then(async (driveClient) => {
         let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
-        if (isActivitiesDataEmpty(recentFiles))
+        if (isActivitiesDataEmpty(recentFiles)) {
+            console.log("missing data in recent files: ",findMissingData(recentFiles));
             return;
-
+        }
         recentFiles.data.activities.forEach((activity) => {
             activity.targets = activity.targets.filter(async (target) => {
                 let fileId = target.driveItem.name.split('/')[1];
@@ -67,7 +88,7 @@ async function loopOverChanges(changedFiles ,callTimeStamps) {
     let currentTimestamp = callTimeStamps;
 
     if (isActivitiesDataEmpty(changedFiles)) {
-        console.warn("Note could be due to no updates found anyways: \n Invalid or missing data structure in changedFiles:", changedFiles);
+        console.warn("Note could be due to no updates found anyways: \n Invalid or missing data structure in changedFiles:",findMissingData(changedFiles) );
 
         lastTimestamp = currentTimestamp;
         console.log(lastTimestamp, "\ttime stamp updated at with no changed files");
