@@ -188,7 +188,7 @@ async function getMetaDataById(authClient, folderId) {
 
     const folderMetaData = await drive.files.get({
         fileId: folderId,
-        fields: "id, name, mimeType, webViewLink"
+        fields: "id, name, mimeType, webViewLink, trashed"
     });
 
     return folderMetaData.data;
