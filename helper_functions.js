@@ -63,11 +63,8 @@ async function initializeRecentFiles() {
     });
 }
 
-async function loopOverChanges(changedFiles) {
-    if (isActivitiesDataEmpty(changedFiles))
-        return;
-
-    let currentTimestamp = new Date();
+async function loopOverChanges(changedFiles ,callTimeStamps) {
+    let currentTimestamp = callTimeStamps;
 
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
@@ -92,6 +89,8 @@ async function loopOverChanges(changedFiles) {
     lastTimestamp = currentTimestamp;
     console.log(lastTimestamp, "\tupdated at the end of the call");
 }
+
+
 
 async function notifyDriveChanges(fileID, diveChannel) {
     console.log("Notifying with fileId =", fileID);
@@ -234,10 +233,11 @@ async function createChannels(guild) {
 }
 
 setInterval(() => {
+    const currentDate= new Date();
     authorize().then(async (driveClient) => {
         console.log("Authorized to pull changes from ", lastTimestamp);
         let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
-        await loopOverChanges(changes);
+        await loopOverChanges(changes,currentDate);
     });
 }, 180000);
 
