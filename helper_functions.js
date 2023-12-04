@@ -184,8 +184,10 @@ async function replyWithRecentFiles(interaction) {
         .then(async (driveClient) => {
             recentFilesInfo = recentFilesInfo.filter(async (recentFileInfo) => {
                 await getMetaDataById(driveClient, recentFileInfo.id).then((responseMessage) => {
-                    if (!responseMessage.trashed)
+                    if (!responseMessage.trashed) {
+                        console.log("File Data Trashed = \n", responseMessage.trashed);
                         return true;
+                    }
                 });
             });
         })
