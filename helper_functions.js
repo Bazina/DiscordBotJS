@@ -38,6 +38,17 @@ async function initializeRecentFiles() {
             return;
 
         recentFiles.data.activities.forEach((activity) => {
+            activity.targets.filter(async (target) => {
+                let fileId = target.driveItem.name.split('/')[1];
+                await getMetaDataById(driveClient, fileId).then((responseMessage) => {
+                    if (!responseMessage.trashed) {
+                        return true;
+                    }
+                });
+            });
+        });
+
+        recentFiles.data.activities.forEach((activity) => {
             console.log(activity.primaryActionDetail);
             console.log(activity.targets);
             activity.targets.forEach(async (target) => {
@@ -164,29 +175,20 @@ async function replyWithRecentFiles(interaction) {
         return;
     }
 
-    let selectedRecentFilesInfo = [];
     console.log("Recent Files Info = \n", recentFilesInfo);
 
     await authorize()
         .then(async (driveClient) => {
-            for (const recentFileInfo of recentFilesInfo) {
-                if (selectedRecentFilesInfo.length === number)
-                    break;
+            recentFilesInfo.filter(async (recentFileInfo) => {
                 await getMetaDataById(driveClient, recentFileInfo.id).then((responseMessage) => {
                     if (!responseMessage.trashed)
-                        selectedRecentFilesInfo.push(responseMessage);
-                    else {
-                        console.log("File is trashed");
-                        // remove this file from recentFilesInfo
-                        recentFilesInfo = recentFilesInfo.filter((fileInfo) => {
-                            return fileInfo.id !== responseMessage.id;
-                        });
-                    }
+                        return true;
                 });
-            }
+            });
         })
         .catch(console.error);
 
+    let selectedRecentFilesInfo = recentFilesInfo.slice(0, Math.min(number, recentFilesInfo.length));
     console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
 
     if (selectedRecentFilesInfo.length > 0) {
