@@ -18,6 +18,8 @@ client.on('ready', () => {
     }
 });
 
+client.on('warn', console.warn);
+
 keepAlive()
 authorize();
 client.login(token);
