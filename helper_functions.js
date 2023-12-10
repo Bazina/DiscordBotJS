@@ -269,14 +269,14 @@ async function createChannels(guild) {
     }
 }
 
-setInterval(() => {
-    const currentDate= new Date();
-    authorize().then(async (driveClient) => {
-        console.log("Authorized to pull changes from ", lastTimestamp);
-        let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
-        await loopOverChanges(changes,currentDate);
-    });
-}, 180000);
+//setInterval(() => {
+//    const currentDate= new Date();
+//    authorize().then(async (driveClient) => {
+//        console.log("Authorized to pull changes from ", lastTimestamp);
+//        let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
+//        await loopOverChanges(changes,currentDate);
+//    });
+//}, 180000);
 
 module.exports = {
     replyWithCourseData,
