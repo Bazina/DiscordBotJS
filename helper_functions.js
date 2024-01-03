@@ -30,6 +30,7 @@ function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
 function isActivitiesDataEmpty(files) {
     return !files || !files.data || !files.data.activities || files.data.activities.length < 0;
 }
+
 function findMissingData(files) {
     const missingData = [];
 
@@ -55,7 +56,7 @@ async function initializeRecentFiles() {
     authorize().then(async (driveClient) => {
         let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
         if (isActivitiesDataEmpty(recentFiles)) {
-            console.log("missing data in recent files: ",findMissingData(recentFiles));
+            console.log("missing data in recent files: ", findMissingData(recentFiles));
             return;
         }
         recentFiles.data.activities.forEach((activity) => {
@@ -84,18 +85,19 @@ async function initializeRecentFiles() {
     });
 }
 
-async function loopOverChanges(changedFiles ,callTimeStamps) {
+async function loopOverChanges(changedFiles, callTimeStamps) {
     let currentTimestamp = callTimeStamps;
 
     if (isActivitiesDataEmpty(changedFiles)) {
-        console.warn("Invalid or missing data structure in changedFiles: ",findMissingData(changedFiles),"\nNote could be due to no updates found anyway");
+        console.warn("Invalid or missing data structure in changedFiles: ", findMissingData(changedFiles), "\nNote could be due to no updates found anyway");
 
         lastTimestamp = currentTimestamp;
         console.log(lastTimestamp, "\ttime stamp updated at with no changed files");
         return;
     }
 
-
+    const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
+    diveChannel.send({content: "@here New Changes in Drive"});
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
@@ -106,10 +108,9 @@ async function loopOverChanges(changedFiles ,callTimeStamps) {
             let timeStamp = activity.timestamp;
             console.log(fileId, timeStamp);
             if (new Date(timeStamp).getDate() < new Date(lastTimestamp).getDate()) {
-                console.warn("this file id :", fileId," should have been notified before ");
+                console.warn("this file id :", fileId, " should have been notified before ");
                 return;
             }
-            const diveChannel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
             notifyDriveChanges(fileId, diveChannel);
         });
 
@@ -118,7 +119,6 @@ async function loopOverChanges(changedFiles ,callTimeStamps) {
     lastTimestamp = currentTimestamp;
     console.log(lastTimestamp, "\tupdated at the end of the call");
 }
-
 
 
 async function notifyDriveChanges(fileID, diveChannel) {
@@ -137,7 +137,7 @@ async function notifyDriveChanges(fileID, diveChannel) {
                     .addFields({name: 'File Type', value: responseMessage.mimeType, inline: true})
                     .setImage(responseMessage.thumbnailLink)
                     .setTimestamp();
-                diveChannel.send({content: "@here", embeds: [embed]});
+                diveChannel.send({embeds: [embed]});
                 pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
             });
         })
@@ -193,6 +193,7 @@ async function replyWithCourseData(interaction) {
         })
         .catch(console.error);
 }
+
 async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
     console.log("get recent data called = " + (++getRecentDataCallsStats));
@@ -270,11 +271,11 @@ async function createChannels(guild) {
 }
 
 setInterval(() => {
-    const currentDate= new Date();
+    const currentDate = new Date();
     authorize().then(async (driveClient) => {
         console.log("Authorized to pull changes from ", lastTimestamp);
         let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
-        await loopOverChanges(changes,currentDate);
+        await loopOverChanges(changes, currentDate);
     });
 }, 180000);
 
