@@ -62,12 +62,13 @@ async function initializeRecentFiles() {
         recentFiles.data.activities.forEach((activity) => {
             activity.targets = activity.targets.filter(async (target) => {
                 let fileId = target.driveItem.name.split('/')[1];
-                await getMetaDataById(driveClient, fileId).then((responseMessage) => {
-                    console.log(responseMessage.trashed);
-                    if (!responseMessage.trashed) {
-                        return true;
-                    }
-                });
+                try {
+                    let responseMessage = await getMetaDataById(driveClient, fileId);
+                    return !responseMessage.trashed;
+                } catch (error) {
+                    console.error("Error filtering recent files:", error);
+                    return false;
+                }
             });
         });
 

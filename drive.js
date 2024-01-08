@@ -186,12 +186,18 @@ async function getFoldersMetaDataInFolder(authClient, folderId) {
 async function getMetaDataById(authClient, folderId) {
     const drive = google.drive({version: 'v3', auth: authClient});
 
-    const folderMetaData = await drive.files.get({
-        fileId: folderId,
-        fields: "id, name, mimeType, webViewLink, trashed"
-    });
+    // add try catch block and return Gaxios error if file not found
+    try {
+        const folderMetaData = await drive.files.get({
+            fileId: folderId,
+            fields: "id, name, mimeType, webViewLink, trashed"
+        });
 
-    return folderMetaData.data;
+        return folderMetaData.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
 }
 
 async function pullChanges(authClient, driveId, timestamp) {
