@@ -20,6 +20,8 @@ client.on('ready', () => {
 
 client.on('warn', console.warn);
 
-keepAlive()
-authorize();
-client.login(token);
+(async () => {
+    keepAlive();
+    await authorize();
+    return await client.login(token);
+})();
