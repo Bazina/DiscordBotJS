@@ -17,10 +17,10 @@ global.client = new Client({
 client.once(Events.ClientReady, () => {
     global.GUILD_ID = client.guilds.cache.first().id;
     // uncomment the next line to register new slash commands
-    // require('./initialization.js');
+    require('./bot/initialization.js');
 });
 
 client.on(Events.GuildCreate, (guild) => {
     console.log(`The bot has joined the guild: ${guild.name} (ID: ${guild.id})`);
-    require('./initialization.js');
+    require('./bot/initialization.js');
 });
