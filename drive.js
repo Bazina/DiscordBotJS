@@ -227,7 +227,7 @@ async function getMetaDataById(authClient, folderId) {
  * @param authClient - authorized OAuth2 client.
  * @param driveId - drive id.
  * @param timestamp - timestamp.
- * @returns {Promise<GaxiosResponse<driveactivity_v2.Schema$QueryDriveActivityResponse>>}
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
  */
 async function pullChanges(authClient, driveId, timestamp) {
     return pullChangesWithLimit(authClient, driveId, timestamp, 10);
@@ -239,7 +239,7 @@ async function pullChanges(authClient, driveId, timestamp) {
  * @param driveId - drive id.
  * @param timestamp - timestamp.
  * @param pageSize - number of changes .
- * @returns {Promise<GaxiosResponse<driveactivity_v2.Schema$QueryDriveActivityResponse>>}
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
  */
 async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
