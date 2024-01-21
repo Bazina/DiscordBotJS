@@ -14,6 +14,10 @@ let beginningOfRecent = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOStri
 let getCourseDataCallsStats = 0;
 let getRecentDataCallsStats = 0;
 
+/**
+ * Pushes the response message into recent files info.
+ * @param responseMessage - response message from Google Drive.
+ */
 function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
     const responseDict = {};
     responseDict.name = responseMessage.name;
@@ -27,10 +31,20 @@ function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
     recentFilesInfo.unshift(responseDict);
 }
 
+/**
+ * Checks if the activities data is empty.
+ * @param files - files object.
+ * @returns {boolean} - true if empty, false otherwise.
+ */
 function isActivitiesDataEmpty(files) {
     return !files || !files.data || !files.data.activities || files.data.activities.length < 0;
 }
 
+/**
+ * Finds missing data in the files object.
+ * @param files - files object.
+ * @returns {*[]} - array of missing data.
+ */
 function findMissingData(files) {
     const missingData = [];
 
@@ -51,7 +65,11 @@ function findMissingData(files) {
     return missingData;
 }
 
-
+/**
+ * Initializes recent files info.
+ * This function is called when the bot is started.
+ * @returns {Promise<void>}
+ */
 async function initializeRecentFiles() {
     authorize().then(async (driveClient) => {
         let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
@@ -86,6 +104,13 @@ async function initializeRecentFiles() {
     });
 }
 
+/**
+ * Loops over the changes.
+ * If the file is not trashed, it notifies the changes.
+ * @param changedFiles - changed files object.
+ * @param callTimeStamps - Time stamp of the call to filter out old changes.
+ * @returns {Promise<void>}
+ */
 async function loopOverChanges(changedFiles, callTimeStamps) {
     let currentTimestamp = callTimeStamps;
 
@@ -121,7 +146,12 @@ async function loopOverChanges(changedFiles, callTimeStamps) {
     console.log(lastTimestamp, "\tupdated at the end of the call");
 }
 
-
+/**
+ * Notifies the drive changes with a file uploaded.
+ * @param fileID - file id.
+ * @param diveChannel - channel to notify.
+ * @returns {Promise<void>}
+ */
 async function notifyDriveChanges(fileID, diveChannel) {
     console.log("Notifying with fileId =", fileID);
     await authorize()
@@ -145,6 +175,11 @@ async function notifyDriveChanges(fileID, diveChannel) {
         .catch(console.error);
 }
 
+/**
+ * Replies with course data like folders and files int the course folder.
+ * @param interaction - interaction object.
+ * @returns {Promise<void>}
+ */
 async function replyWithCourseData(interaction) {
     let courseId = interaction.options.get('course').value;
     let embed = new EmbedBuilder();
@@ -195,6 +230,11 @@ async function replyWithCourseData(interaction) {
         .catch(console.error);
 }
 
+/**
+ * Replies with the passed number of recent files.
+ * @param interaction - interaction object.
+ * @returns {Promise<void>}
+ */
 async function replyWithRecentFiles(interaction) {
     const number = interaction.options.getInteger('number');
     console.log("get recent data called = " + (++getRecentDataCallsStats));
@@ -257,20 +297,9 @@ async function replyWithRecentFiles(interaction) {
     }
 }
 
-
-async function createChannels(guild) {
-    try {
-        const diveInDriveChannel = await guild.channels.create('dive-in-drive');
-        const diveWithDriveChannel = await guild.channels.create('dive-with-drive');
-
-        console.log('Channels created successfully');
-        console.log('dive-in-drive channel ID:', diveInDriveChannel.id);
-        console.log('dive-with-drive channel ID:', diveWithDriveChannel.id);
-    } catch (error) {
-        console.error('Error creating channels:', error);
-    }
-}
-
+/**
+ * Checks for changes every 3 minutes.
+ */
 setInterval(() => {
     const currentDate = new Date();
     authorize().then(async (driveClient) => {
