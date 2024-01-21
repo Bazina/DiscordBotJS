@@ -17,7 +17,7 @@ global.client = new Client({
 client.once(Events.ClientReady, () => {
     global.GUILD_ID = client.guilds.cache.first().id;
     // uncomment the next line to register new slash commands
-    require('./bot/initialization.js');
+    // require('./bot/initialization.js');
 });
 
 client.on(Events.GuildCreate, (guild) => {
