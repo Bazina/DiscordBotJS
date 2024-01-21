@@ -27,7 +27,7 @@ async function loadSavedCredentialsIfExist() {
 /**
  * Serializes credentials to a file compatible with GoogleAUth.fromJSON.
  *
- * @param {OAuth2Client} client
+ * @param {OAuth2Client} client - The OAuth2 client to save credentials for.
  * @return {Promise<void>}
  */
 async function saveCredentials(client) {
@@ -62,6 +62,11 @@ async function authorize() {
     return client;
 }
 
+/**
+ * Build real link if shortcut.
+ * @param fileMetaData - file metadata from Google Drive.
+ * @returns {*}
+ */
 function buildRealLinkIfShortcut(fileMetaData) {
     if (fileMetaData.data.mimeType === "application/vnd.google-apps.shortcut") {
         if (fileMetaData.data.shortcutDetails.targetMimeType === "application/vnd.google-apps.folder") {
@@ -81,7 +86,7 @@ function buildRealLinkIfShortcut(fileMetaData) {
 
 /**
  * Lists the names and IDs of up to 10 files.
- * @param {OAuth2Client} authClient An authorized OAuth2 client.
+ * @param {OAuth2Client} authClient - An authorized OAuth2 client.
  * @param newFileId
  */
 async function buildNotificationMessage(authClient, newFileId) {
@@ -125,6 +130,12 @@ async function buildNotificationMessage(authClient, newFileId) {
     return message;
 }
 
+/**
+ * Get all courses metadata in specific folders in drive.
+ * @param authClient - authorized OAuth2 client.
+ * @param driveId - drive id.
+ * @returns {Promise<(*&{value: *})[]>}
+ */
 async function getCourseMetaDataInSpecificFoldersInDrive(authClient, driveId) {
     const drive = google.drive({version: 'v3', auth: authClient});
 
@@ -163,6 +174,12 @@ async function getCourseMetaDataInSpecificFoldersInDrive(authClient, driveId) {
     return courseMetaData;
 }
 
+/**
+ * Get all folders metadata in specific folder.
+ * @param authClient - authorized OAuth2 client.
+ * @param folderId - folder id.
+ * @returns {Promise<drive_v3.Schema$File[]>}
+ */
 async function getFoldersMetaDataInFolder(authClient, folderId) {
     const drive = google.drive({version: 'v3', auth: authClient});
 
@@ -183,10 +200,15 @@ async function getFoldersMetaDataInFolder(authClient, folderId) {
     return folderChildren.data.files;
 }
 
+/**
+ * Get metadata of file by id.
+ * @param authClient - authorized OAuth2 client.
+ * @param folderId - file id.
+ * @returns {Promise<drive_v3.Schema$File>}
+ */
 async function getMetaDataById(authClient, folderId) {
     const drive = google.drive({version: 'v3', auth: authClient});
 
-    // add try catch block and return Gaxios error if file not found
     try {
         const folderMetaData = await drive.files.get({
             fileId: folderId,
@@ -200,10 +222,25 @@ async function getMetaDataById(authClient, folderId) {
     }
 }
 
+/**
+ * Pull changes from drive.
+ * @param authClient - authorized OAuth2 client.
+ * @param driveId - drive id.
+ * @param timestamp - timestamp.
+ * @returns {Promise<GaxiosResponse<driveactivity_v2.Schema$QueryDriveActivityResponse>>}
+ */
 async function pullChanges(authClient, driveId, timestamp) {
     return pullChangesWithLimit(authClient, driveId, timestamp, 10);
 }
 
+/**
+ * Pull changes from drive with limit on number of changes.
+ * @param authClient - authorized OAuth2 client.
+ * @param driveId - drive id.
+ * @param timestamp - timestamp.
+ * @param pageSize - number of changes .
+ * @returns {Promise<GaxiosResponse<driveactivity_v2.Schema$QueryDriveActivityResponse>>}
+ */
 async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
