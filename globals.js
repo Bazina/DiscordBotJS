@@ -1,4 +1,4 @@
-const {Client, GatewayIntentBits} = require('discord.js');
+const {Client, GatewayIntentBits, Events} = require('discord.js');
 
 global.token = process.env['token'];
 global.CLIENT_ID = process.env['client_id'];
@@ -14,12 +14,13 @@ global.client = new Client({
     ],
 });
 
-client.once('ready', () => {
+client.once(Events.ClientReady, () => {
     global.GUILD_ID = client.guilds.cache.first().id;
-    //require('./initialization.js');
+    // uncomment the next line to register new slash commands
+    // require('./initialization.js');
 });
 
-client.on('guildCreate', (guild) => {
+client.on(Events.GuildCreate, (guild) => {
     console.log(`The bot has joined the guild: ${guild.name} (ID: ${guild.id})`);
     require('./initialization.js');
 });
