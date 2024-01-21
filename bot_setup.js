@@ -3,22 +3,23 @@ require('./interactions.js');
 
 const keepAlive = require("./server")
 const {authorize} = require("./drive")
+const {Events} = require("discord.js");
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+client.on(Events.ClientReady, async (readyClient) => {
+    console.log(`Logged in as ${readyClient.user.tag}!`);
 
-    const dive_channel = client.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
+    const dive_channel = readyClient.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
 
     if (dive_channel) {
         console.log('Bot is back online!');
         console.log('getting recent files');
-        initializeRecentFiles()
+        await initializeRecentFiles()
     } else {
         console.log('Channel not found!');
     }
 });
 
-client.on('warn', console.warn);
+client.on(Events.Warn, console.warn);
 
 (async () => {
     keepAlive();
