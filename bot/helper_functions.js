@@ -287,7 +287,11 @@ async function replyWithRecentFiles(interaction) {
                 );
             }
 
-            await interaction.reply({embeds: [listEmbed], ephemeral: true});
+            try {
+                await interaction.reply({embeds: [listEmbed], ephemeral: true});
+            } catch (error) {
+                console.error("Error replying with recent files:", error);
+            }
         } else {
             await interaction.reply({content: 'No recent files found.', ephemeral: true});
         }
