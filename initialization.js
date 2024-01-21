@@ -1,13 +1,10 @@
 const {REST} = require('@discordjs/rest');
-const {Routes} = require('discord-api-types/v9');
-const {PermissionsBitField} = require('discord.js');
 const {authorize, getCourseMetaDataInSpecificFoldersInDrive} = require("./drive");
+const {ApplicationCommandOptionType, Routes} = require("discord-api-types/v10");
 
-//list the valid permissions
-const validPermissions = Object.keys(PermissionsBitField.Flags).slice(0, 25);
 let choices = [];
 
-const rest = new REST({version: '9'}).setToken(token);
+const rest = new REST({version: '10'}).setToken(token);
 
 (async () => {
     try {
@@ -24,41 +21,9 @@ const rest = new REST({version: '9'}).setToken(token);
                 options: [{
                     name: 'number',
                     description: 'integer how many recently uploaded files needed (max 21)',
-                    type: 4,
+                    type: ApplicationCommandOptionType.Integer,
                     required: true,
                 }],
-            },
-            {
-                name: 'edit_permissions',
-                description: 'Modify bot access',
-                options: [
-                    {
-                        name: 'add_remove',
-                        description: 'Please type "add" or "remove" only',
-                        type: 3,
-                        required: true,
-                        choices: [
-                            {
-                                name: 'Add',
-                                value: 'add',
-                            },
-                            {
-                                name: 'Remove',
-                                value: 'remove',
-                            },
-                        ],
-                    },
-                    {
-                        name: 'permission',
-                        description: 'Please type the permission you want to add/remove',
-                        type: 3,
-                        required: true,
-                        choices: validPermissions.map((permission) => ({
-                            name: permission,
-                            value: permission,
-                        })),
-                    },
-                ],
             },
             {
                 name: 'get',
@@ -66,12 +31,13 @@ const rest = new REST({version: '9'}).setToken(token);
                 options: [{
                     name: 'course',
                     description: 'Course name',
-                    type: 3,
+                    type: ApplicationCommandOptionType.String,
                     required: true,
                     choices: choices.slice(Math.max(-25, -choices.length)).reverse()
                 }]
             }
         ];
+
         await rest.put(
             Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
             {body: commands},
