@@ -1,8 +1,8 @@
 const {initializeRecentFiles} = require('./helper_functions.js');
 require('./interactions.js');
 
-const keepAlive = require("./server")
-const {authorize} = require("./drive")
+const keepAlive = require("../server")
+const {authorize} = require("../drive/drive")
 const {Events} = require("discord.js");
 
 client.on(Events.ClientReady, async (readyClient) => {

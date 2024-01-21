@@ -1,5 +1,5 @@
 const {REST} = require('@discordjs/rest');
-const {authorize, getCourseMetaDataInSpecificFoldersInDrive} = require("./drive");
+const {authorize, getCourseMetaDataInSpecificFoldersInDrive} = require("../drive/drive");
 const {ApplicationCommandOptionType, Routes} = require("discord-api-types/v10");
 
 let choices = [];

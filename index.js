@@ -1,2 +1,2 @@
 require('./globals.js');
-require('./bot_setup.js');
+require('./bot/bot_setup.js');
