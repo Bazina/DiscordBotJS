@@ -7,8 +7,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     if (interaction.commandName === 'edit_permissions') return;
 
-    if (interaction.channelId !== DIVE_WITH_DIVE_CHANNEL_ID) {
-        await interaction.reply({content: `Please use <#${DIVE_WITH_DIVE_CHANNEL_ID}> channel`, ephemeral: true});
+    if (interaction.channelId !== DIVE_WITH_DRIVE_CHANNEL_ID) {
+        await interaction.reply({content: `Please use <#${DIVE_WITH_DRIVE_CHANNEL_ID}> channel`, ephemeral: true});
         return;
     }
 

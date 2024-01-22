@@ -252,6 +252,21 @@ async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     });
 }
 
+/**
+ * Create token.json locally.
+ * @returns {Promise<void>}
+ */
+async function createTokenLocally() {
+    authorize().then(async (driveClient) => {
+        const courses = await getCourseMetaDataInSpecificFoldersInDrive(driveClient, DRIVE_ID);
+        console.log(courses);
+    });
+}
+
+(async () => {
+        await createTokenLocally();
+})();
+
 module.exports = {
     authorize,
     buildNotificationMessage,

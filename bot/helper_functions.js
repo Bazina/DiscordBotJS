@@ -6,7 +6,7 @@ const {
     getMetaDataById,
     pullChanges,
     pullChangesWithLimit
-} = require("../drive/drive")
+} = require("../drive")
 const maxLength = 21;
 let recentFilesInfo = [];
 let lastTimestamp = new Date();

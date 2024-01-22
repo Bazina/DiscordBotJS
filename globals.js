@@ -4,7 +4,7 @@ global.token = process.env['token'];
 global.CLIENT_ID = process.env['client_id'];
 global.DRIVE_ID = process.env['drive_id'];
 global.NOTIFY_DRIVE_CHANNEL_ID = process.env['notifyDriveChannelID'];
-global.DIVE_WITH_DIVE_CHANNEL_ID = process.env['diveWithDiveChannelID'];
+global.DIVE_WITH_DRIVE_CHANNEL_ID = process.env['diveWithDriveChannelID'];
 
 global.client = new Client({
     intents: [
@@ -16,8 +16,8 @@ global.client = new Client({
 
 client.once(Events.ClientReady, () => {
     global.GUILD_ID = client.guilds.cache.first().id;
-    // uncomment the next line to register new slash commands
-    // require('./bot/initialization.js');
+    // next line (require('./bot/initialization.js');) only need to run once.
+    require('./bot/initialization.js');
 });
 
 client.on(Events.GuildCreate, (guild) => {
