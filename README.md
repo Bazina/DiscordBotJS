@@ -96,6 +96,8 @@ Here is the link to the [Render](https://dashboard.render.com/) website where yo
 7. Add Secret Files `credentials.json` and `token.json`. These files are used to authenticate with the Google Drive API.
 
 > **Important Note**
+>
+> The `drive_id` is the last part of the URL of the Google Drive folder. For example, if the URL is `https://drive.google.com/drive/folders/1a2b3c4d5e6f7g8h9i0j`, the `drive_id` is `1a2b3c4d5e6f7g8h9i0j`.
 > 
 > Render will only be up for 15 minutes if there are no requests to the server.
 >
