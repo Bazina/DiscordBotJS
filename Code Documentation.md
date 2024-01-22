@@ -47,7 +47,9 @@ This document provides an overview and documentation for the codebase of the Dis
 
 - **replyWithCourseData(interaction):** Replies with course data, including folders and files in a specified course.
 
-- **replyWithRecentFiles(interaction):** Replies with information about the most recent files.
+- **replyWithRecentFiles(interaction):** Replies with information about the most recent files.'
+
+- **Pull changes** every 3 minutes.
 
 ## Initialization
 
