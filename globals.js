@@ -3,7 +3,7 @@ const {Client, GatewayIntentBits, Events} = require('discord.js');
 global.token = process.env['token'];
 global.CLIENT_ID = process.env['client_id'];
 global.DRIVE_ID = process.env['drive_id'];
-global.DIVE_IN_DRIVE_CHANNEL_ID = process.env['diveInDriveChannelID'];
+global.NOTIFY_DRIVE_CHANNEL_ID = process.env['notifyDriveChannelID'];
 global.DIVE_WITH_DIVE_CHANNEL_ID = process.env['diveWithDiveChannelID'];
 
 global.client = new Client({

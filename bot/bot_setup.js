@@ -8,7 +8,7 @@ const {Events} = require("discord.js");
 client.on(Events.ClientReady, async (readyClient) => {
     console.log(`Logged in as ${readyClient.user.tag}!`);
 
-    const dive_channel = readyClient.channels.cache.get(DIVE_IN_DRIVE_CHANNEL_ID);
+    const dive_channel = readyClient.channels.cache.get(NOTIFY_DRIVE_CHANNEL_ID);
 
     if (dive_channel) {
         console.log('Bot is back online!');
