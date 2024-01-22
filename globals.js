@@ -16,7 +16,7 @@ global.client = new Client({
 
 client.once(Events.ClientReady, () => {
     global.GUILD_ID = client.guilds.cache.first().id;
-    // next line (require('./bot/initialization.js');) only need to run once.
+    // next line "require('./bot/initialization.js');" only need to run once.
     require('./bot/initialization.js');
 });
 
