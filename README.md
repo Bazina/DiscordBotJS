@@ -95,6 +95,14 @@ Here is the link to the [Render](https://dashboard.render.com/) website where yo
 6. Add Environment Variables `client_id, token, notifyDriveChannelID, diveWithDriveChannelID, drive_id`, All of these can be found in the `globals.js` file and all belong to discord except for `drive_id` which is the ID of the Google Drive you want to connect to.
 7. Add Secret Files `credentials.json` and `token.json`. These files are used to authenticate with the Google Drive API.
 
+> **Important Note**
+> 
+> Render will only be up for 15 minutes if there are no requests to the server.
+>
+> To keep the server alive, you can use [UptimeRobot](https://uptimerobot.com/) to send requests to the server every 5 minutes.
+>
+> [UptimeRobot Tutorial](https://youtu.be/7rU_KyudGBY?t=3306&si=QrwxbYPFdHEVFgK7), you can skip to 55:06.
+
 ## Local Usage
 
 1. Run the bot
