@@ -26,6 +26,10 @@ This Discord bot enhances collaboration by providing real-time notifications abo
 - Retrieve information about recent files `(/recent <number>)`.
 - Get a list of files in a specific course folder `(/get <course>)`.
 
+> **Note**
+> 
+> Take a look at [Code Documentation](https://github.com/Bazina/DiscordBotJS/blob/master/Code%20Documentation.md)
+
 ## Prerequisites
 
 Before using this bot, ensure you have the following
