@@ -97,15 +97,15 @@ Here is the link to the [Render](https://dashboard.render.com/) website where yo
 
 > **Important Note**
 >
-> The `drive_id` is the last part of the URL of the Google Drive folder. For example, if the URL is `https://drive.google.com/drive/folders/1a2b3c4d5e6f7g8h9i0j`, the `drive_id` is `1a2b3c4d5e6f7g8h9i0j`.
+> - The `drive_id` is the last part of the URL of the Google Drive folder. For example, if the URL is `https://drive.google.com/drive/folders/1a2b3c4d5e6f7g8h9i0j`, the `drive_id` is `1a2b3c4d5e6f7g8h9i0j`.
 > 
-> Render will only be up for 15 minutes if there are no requests to the server.
+> - Render will only be up for 15 minutes if there are no requests to the server.
 >
-> To keep the server alive, you can use [UptimeRobot](https://uptimerobot.com/) to send requests to the server every 5 minutes.
+> - To keep the server alive, you can use [UptimeRobot](https://uptimerobot.com/) to send requests to the server every 5 minutes.
 >
-> [UptimeRobot Tutorial](https://youtu.be/7rU_KyudGBY?t=3306&si=QrwxbYPFdHEVFgK7), you can skip to 55:06.
+> - [UptimeRobot Tutorial](https://youtu.be/7rU_KyudGBY?t=3306&si=QrwxbYPFdHEVFgK7), you can skip to 55:06.
 > 
-> From dashboard open your project then in the top left corner under the project name you can find the server URL.
+> - From dashboard open your project then in the top left corner under the project name you can find the server URL.
 
 ## Local Usage
 
