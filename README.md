@@ -102,6 +102,8 @@ Here is the link to the [Render](https://dashboard.render.com/) website where yo
 > To keep the server alive, you can use [UptimeRobot](https://uptimerobot.com/) to send requests to the server every 5 minutes.
 >
 > [UptimeRobot Tutorial](https://youtu.be/7rU_KyudGBY?t=3306&si=QrwxbYPFdHEVFgK7), you can skip to 55:06.
+> 
+> From dashboard open your project then in the top left corner under the project name you can find the server URL.
 
 ## Local Usage
 
