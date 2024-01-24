@@ -107,7 +107,7 @@ async function initializeRecentFiles() {
                     fileId = target.driveItem.name.split('/')[1];
                 } else {
                     console.error("Invalid driveItem:", target.driveItem);
-                    continue;  // Skip to the next iteration or handle the error appropriately
+                    continue;
                 }
                 try {
                     const responseMessage = await buildNotificationMessage(driveClient, fileId);
