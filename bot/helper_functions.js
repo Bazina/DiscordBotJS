@@ -152,6 +152,8 @@ async function replyWithCourseData(interaction) {
 
     await authorize()
         .then(async (driveClient) => {
+            await interaction.deferReply({ephemeral: true})
+
             console.log("get course data called = " + (++getCourseDataCallsStats));
             console.log("Authorized to get course data");
             await getMetaDataById(driveClient, courseId).then((responseMessage) => {
@@ -190,7 +192,7 @@ async function replyWithCourseData(interaction) {
             });
         })
         .then(async () => {
-            await interaction.reply({embeds: [embed], components: buttonsRow, ephemeral: true});
+            await interaction.editReply({embeds: [embed], components: buttonsRow});
         })
         .catch(console.error);
 }
