@@ -96,10 +96,14 @@ async function initializeRecentFiles() {
             console.log(activity.primaryActionDetail);
             console.log(activity.targets);
             activity.targets.forEach(async (target) => {
-                let fileId = target.driveItem.name.split('/')[1];
-                await buildNotificationMessage(driveClient, fileId).then((responseMessage) => {
-                    pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
-                });
+                try {
+                    let fileId = target.driveItem.name.split('/')[1];
+                    await buildNotificationMessage(driveClient, fileId).then((responseMessage) => {
+                        pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
+                    });
+                } catch (error) {
+                    console.error("Error filtering recent files:", error);
+                }
             });
         });
     });
@@ -131,7 +135,8 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
     let currentTimestamp = callTimeStamps;
 
     if (isActivitiesDataEmpty(changedFiles)) {
-        console.warn("Invalid or missing data structure in changedFiles: ", findMissingData(changedFiles), "\nNote could be due to no updates found anyway");
+        console.warn("Invalid or missing data structure in changedFiles: ",
+            findMissingData(changedFiles), "\nNote could be due to no updates found anyway");
 
         lastTimestamp = currentTimestamp;
         console.log(lastTimestamp, "\ttime stamp updated at with no changed files");
