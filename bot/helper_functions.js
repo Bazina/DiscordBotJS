@@ -67,63 +67,6 @@ function findMissingData(files) {
 }
 
 /**
- * Initializes recent files info.
- * This function is called when the bot is started.
- * @returns {Promise<void>}
- */
-async function initializeRecentFiles() {
-    try {
-        const driveClient = await authorize();
-
-        const recentFiles = await pullCreatedChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
-
-        if (isActivitiesDataEmpty(recentFiles)) {
-            console.log("missing data in recent files: ", findMissingData(recentFiles));
-            return;
-        }
-
-        for (const activity of recentFiles.data.activities) {
-            activity.targets = await Promise.all(activity.targets.map(async (target) => {
-                let fileId;
-                if (target.driveItem && target.driveItem.name) {
-                    fileId = target.driveItem.name.split('/')[1];
-                }
-                try {
-                    const responseMessage = await getMetaDataById(driveClient, fileId);
-                    return !responseMessage.trashed;
-                } catch (error) {
-                    console.error("Error filtering recent files:", error);
-                    return false;
-                }
-            }));
-
-            console.log("initializing recent files");
-            console.log(activity.primaryActionDetail);
-            console.log(activity.targets);
-
-            for (const target of activity.targets) {
-                let fileId;
-                if (target.driveItem && target.driveItem.name) {
-                    fileId = target.driveItem.name.split('/')[1];
-                } else {
-                    console.error("Invalid driveItem:", target.driveItem);
-                    continue;
-                }
-                try {
-                    const responseMessage = await buildNotificationMessage(driveClient, fileId);
-                    pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
-                } catch (error) {
-                    console.error("Error building notification message:", error);
-                }
-            }
-        }
-    } catch (error) {
-        console.error("Error in initializeRecentFiles:", error);
-    }
-}
-
-
-/**
  * Converts the given base word to its simple past tense.
  * @param {string} word - The base word to convert.
  * @returns {string} - The word in its simple past tense.
@@ -359,6 +302,5 @@ setInterval(() => {
 
 module.exports = {
     replyWithCourseData,
-    replyWithRecentFiles,
-    initializeRecentFiles
+    replyWithRecentFiles
 };

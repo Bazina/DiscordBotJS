@@ -1,4 +1,3 @@
-const {initializeRecentFiles} = require('./helper_functions.js');
 require('./interactions.js');
 
 const keepAlive = require("../server")
@@ -17,7 +16,6 @@ client.on(Events.ClientReady, async (readyClient) => {
         }
         console.log('Bot is back online!');
         console.log('getting recent files');
-        await initializeRecentFiles()
     } else {
         console.log('Dive Channel not found!');
     }

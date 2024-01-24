@@ -39,8 +39,6 @@ This document provides an overview and documentation for the codebase of the Dis
 
 ## Helper Functions
 
-- **initializeRecentFiles():** Initializes recent files when the bot is started. Calls Google Drive API functions to pull recent file changes.
-
 - **pushIntoRecentFileInfoUsingResponseMessage(responseMessage):** Adds information about a file into the list of recent files.
 
 - **loopOverChanges(changedFiles, callTimeStamps):** Loops over the changes in Google Drive and notifies the Discord channel about new changes.
