@@ -87,9 +87,6 @@ async function initializeRecentFiles() {
                 let fileId;
                 if (target.driveItem && target.driveItem.name) {
                     fileId = target.driveItem.name.split('/')[1];
-                }else {
-                    console.error("Invalid driveItem:", target.driveItem);
-                    continue;
                 }
                 try {
                     const responseMessage = await getMetaDataById(driveClient, fileId);
