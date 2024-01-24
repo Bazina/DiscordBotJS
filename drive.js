@@ -319,9 +319,6 @@ async function createTokenLocally() {
         });
 
         HOME_DIR = homeMetaData.data.name;
-        getRecentFiles(driveClient, 10).then((files) => {
-            console.log(files);
-        });
     });
 }
 
