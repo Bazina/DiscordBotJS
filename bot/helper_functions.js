@@ -4,8 +4,8 @@ const {
     buildNotificationMessage,
     getFoldersMetaDataInFolder,
     getMetaDataById,
-    pullChanges,
-    pullChangesWithLimit
+    pullCreatedChanges,
+    pullCreatedChangesWithLimit
 } = require("../drive")
 const maxLength = 21;
 let recentFilesInfo = [];
@@ -72,7 +72,7 @@ function findMissingData(files) {
  */
 async function initializeRecentFiles() {
     authorize().then(async (driveClient) => {
-        let recentFiles = await pullChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
+        let recentFiles = await pullCreatedChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
         if (isActivitiesDataEmpty(recentFiles)) {
             console.log("missing data in recent files: ", findMissingData(recentFiles));
             return;
@@ -308,7 +308,7 @@ setInterval(() => {
     const currentDate = new Date();
     authorize().then(async (driveClient) => {
         console.log("Authorized to pull changes from ", lastTimestamp);
-        let changes = await pullChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
+        let changes = await pullCreatedChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
         await loopOverChanges(changes, currentDate);
     });
 }, 180000);

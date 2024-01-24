@@ -228,8 +228,19 @@ async function getMetaDataById(authClient, folderId) {
  * @param timestamp - timestamp.
  * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
  */
-async function pullChanges(authClient, driveId, timestamp) {
-    return pullChangesWithLimit(authClient, driveId, timestamp, 10);
+async function pullCreatedChanges(authClient, driveId, timestamp) {
+    return pullCreatedChangesWithLimit(authClient, driveId, timestamp, 10);
+}
+
+/**
+* Pull changes from drive.
+* @param authClient - authorized OAuth2 client.
+* @param driveId - drive id.
+* @param timestamp - timestamp.
+* @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
+*/
+async function pullAllChanges(authClient, driveId, timestamp) {
+    return pullAllChangesWithLimit(authClient, driveId, timestamp, 10);
 }
 
 /**
@@ -240,17 +251,38 @@ async function pullChanges(authClient, driveId, timestamp) {
  * @param pageSize - number of changes .
  * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
  */
-async function pullChangesWithLimit(authClient, driveId, timestamp, pageSize) {
+async function pullCreatedChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
 
     return driveActivity.activity.query({
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: pageSize,
-            filter: `time >= "${timestamp}" detail.action_detail_case:CREATE`
+            filter: `time >= "${timestamp}" detail.action_detail_case :CREATE`
         }
     });
 }
+/**
+ * Pull changes from drive with limit on number of changes.
+ * @param authClient - authorized OAuth2 client.
+ * @param driveId - drive id.
+ * @param timestamp - timestamp.
+ * @param pageSize - number of changes .
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
+ */
+async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize) {
+    const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
+
+    return driveActivity.activity.query({
+        requestBody: {
+            ancestorName: `items/${driveId}`,
+            pageSize: pageSize,
+            filter: `time >= "${timestamp}"`
+        }
+    });
+}
+
+
 
 /**
  * Create token.json locally.
@@ -273,6 +305,8 @@ module.exports = {
     getCourseMetaDataInSpecificFoldersInDrive,
     getFoldersMetaDataInFolder,
     getMetaDataById,
-    pullChanges,
-    pullChangesWithLimit
+    pullCreatedChanges,
+    pullCreatedChangesWithLimit,
+    pullAllChanges,
+    pullAllChangesWithLimit
 };
