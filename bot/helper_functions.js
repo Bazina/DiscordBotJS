@@ -133,7 +133,8 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
-        channel.send({content: activity.primaryActionDetail.keys()[0] + "ed"});
+        if(activity.primaryActionDetail.keys()>0)
+            channel.send({content: activity.primaryActionDetail.keys()[0] + "ed"});
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {
