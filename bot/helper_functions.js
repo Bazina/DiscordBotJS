@@ -215,6 +215,7 @@ async function replyWithRecentFiles(interaction) {
     }
 
     try {
+        interaction.deferReply({ephemeral: true});
         await authorize()
             .then(async (driveClient) => {
                 let selectedRecentFilesInfo = await getRecentFiles(driveClient, number);
@@ -238,7 +239,7 @@ async function replyWithRecentFiles(interaction) {
                     }
 
                     try {
-                        await interaction.reply({embeds: [listEmbed], ephemeral: true});
+                        await interaction.editReply({embeds: [listEmbed]});
                     } catch (error) {
                         console.error("Error replying with recent files:", error);
                     }
