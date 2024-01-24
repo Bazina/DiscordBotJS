@@ -74,8 +74,8 @@ async function getRecentFiles(authClient, number) {
 
     // call buildNotificationMessage for each file in files and return the result
 
-    files = files.data.files.map((file) => {
-        return buildNotificationMessage(authClient, file.id);
+    files = files.data.files.map(async (file) => {
+        return await buildNotificationMessage(authClient, file.id);
     });
 
     return files;

@@ -215,10 +215,9 @@ async function replyWithRecentFiles(interaction) {
     }
 
     try {
-        let selectedRecentFilesInfo = [];
         await authorize()
             .then(async (driveClient) => {
-                selectedRecentFilesInfo = await getRecentFiles(driveClient, number);
+                let selectedRecentFilesInfo = await getRecentFiles(driveClient, number);
                 console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
 
                 if (selectedRecentFilesInfo.length > 0) {
