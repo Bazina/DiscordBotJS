@@ -80,8 +80,8 @@ async function initializeRecentFiles() {
         }
         recentFiles.data.activities.forEach((activity) => {
             activity.targets = activity.targets.filter(async (target) => {
-                let fileId = target.driveItem.name.split('/')[1];
                 try {
+                    let fileId = target.driveItem.name.split('/')[1];
                     let responseMessage = await getMetaDataById(driveClient, fileId);
                     return !responseMessage.trashed;
                 } catch (error) {
