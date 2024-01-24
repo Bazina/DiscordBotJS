@@ -5,7 +5,9 @@ const {
     getFoldersMetaDataInFolder,
     getMetaDataById,
     pullCreatedChanges,
-    pullCreatedChangesWithLimit
+    pullCreatedChangesWithLimit,
+    pullAllChanges,
+    pullAllChangesWithLimit
 } = require("../drive")
 const maxLength = 21;
 let recentFilesInfo = [];
@@ -109,9 +111,10 @@ async function initializeRecentFiles() {
  * If the file is not trashed, it notifies the changes.
  * @param changedFiles - changed files object.
  * @param callTimeStamps - Time stamp of the call to filter out old changes.
+ * @param channelID - channel to send message to.
  * @returns {Promise<void>}
  */
-async function loopOverChanges(changedFiles, callTimeStamps) {
+async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
     let currentTimestamp = callTimeStamps;
 
     if (isActivitiesDataEmpty(changedFiles)) {
@@ -308,8 +311,10 @@ setInterval(() => {
     const currentDate = new Date();
     authorize().then(async (driveClient) => {
         console.log("Authorized to pull changes from ", lastTimestamp);
-        let changes = await pullCreatedChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
-        await loopOverChanges(changes, currentDate);
+        let createdChanges = await pullCreatedChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
+        let allChanges = await pullAllChanges(driveClient, DRIVE_ID, lastTimestamp.toISOString());
+        await loopOverChanges(createdChanges, currentDate, NOTIFY_DRIVE_CHANNEL_ID);
+        await loopOverChanges(allChanges, currentDate, SYNC_DRIVE_CHANNEL_ID);
     });
 }, 180000);
 
