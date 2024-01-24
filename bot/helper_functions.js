@@ -72,42 +72,47 @@ function findMissingData(files) {
  * @returns {Promise<void>}
  */
 async function initializeRecentFiles() {
-    authorize().then(async (driveClient) => {
-        let recentFiles = await pullCreatedChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
+    try {
+        const driveClient = await authorize();
+
+        const recentFiles = await pullCreatedChangesWithLimit(driveClient, DRIVE_ID, beginningOfRecent, 20);
+
         if (isActivitiesDataEmpty(recentFiles)) {
             console.log("missing data in recent files: ", findMissingData(recentFiles));
             return;
         }
-        recentFiles.data.activities.forEach((activity) => {
-            activity.targets = activity.targets.filter(async (target) => {
+
+        for (const activity of recentFiles.data.activities) {
+            activity.targets = await Promise.all(activity.targets.map(async (target) => {
+                const fileId = target.driveItem.name.split('/')[1];
                 try {
-                    let fileId = target.driveItem.name.split('/')[1];
-                    let responseMessage = await getMetaDataById(driveClient, fileId);
+                    const responseMessage = await getMetaDataById(driveClient, fileId);
                     return !responseMessage.trashed;
                 } catch (error) {
                     console.error("Error filtering recent files:", error);
                     return false;
                 }
-            });
-        });
+            }));
 
-        recentFiles.data.activities.forEach((activity) => {
             console.log("initializing recent files");
             console.log(activity.primaryActionDetail);
             console.log(activity.targets);
-            activity.targets.forEach(async (target) => {
+
+            for (const target of activity.targets) {
+                const fileId = target.driveItem.name.split('/')[1];
                 try {
-                    let fileId = target.driveItem.name.split('/')[1];
-                    await buildNotificationMessage(driveClient, fileId).then((responseMessage) => {
-                        pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
-                    });
+                    const responseMessage = await buildNotificationMessage(driveClient, fileId);
+                    pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
                 } catch (error) {
-                    console.error("Error filtering recent files:", error);
+                    console.error("Error building notification message:", error);
                 }
-            });
-        });
-    });
+            }
+        }
+    } catch (error) {
+        console.error("Error in initializeRecentFiles:", error);
+    }
 }
+
 
 /**
  * Converts the given base word to its simple past tense.
