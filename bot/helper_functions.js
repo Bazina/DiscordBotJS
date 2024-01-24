@@ -124,8 +124,9 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
         console.log(lastTimestamp, "\ttime stamp updated at with no changed files");
         return;
     }
+    console.log("chnaged files = \n", changedFiles);
 
-    const diveChannel = client.channels.cache.get(NOTIFY_DRIVE_CHANNEL_ID);
+    const diveChannel = client.channels.cache.get(channelID);
     diveChannel.send({content: "@here New Changes in Drive"});
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
