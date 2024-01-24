@@ -114,7 +114,7 @@ async function initializeRecentFiles() {
  * @param channelID - channel to send message to.
  * @returns {Promise<void>}
  */
-async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
+async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
     let currentTimestamp = callTimeStamps;
 
     if (isActivitiesDataEmpty(changedFiles)) {
@@ -128,13 +128,13 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
 
     const channel = client.channels.cache.get(channelID);
     //send @here if channelID=NOTIFY_DRIVE_CHANNEL_ID for mentioning everyone on file creation only
-    if(channelID===NOTIFY_DRIVE_CHANNEL_ID)
+    if (channelID === NOTIFY_DRIVE_CHANNEL_ID)
         channel.send({content: "@here New Changes in Drive"});
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
         if (Object.keys(activity.primaryActionDetail).length > 0)
-            channel.send({content: ativity.targets.driveItem.title+ " has been " +Object.keys(activity.primaryActionDetail) [0]+ "d" });
+            channel.send({content: ativity.targets.driveItem.title + " has been " + Object.keys(activity.primaryActionDetail) [0] + "d"});
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {

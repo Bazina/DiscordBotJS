@@ -12,7 +12,7 @@ client.on(Events.ClientReady, async (readyClient) => {
     const sync_channel = readyClient.channels.cache.get(SYNC_DRIVE_CHANNEL_ID);
 
     if (dive_channel) {
-        if(!sync_channel) {
+        if (!sync_channel) {
             console.warn('Sync channel not found!');
         }
         console.log('Bot is back online!');
