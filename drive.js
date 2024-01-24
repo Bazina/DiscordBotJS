@@ -62,6 +62,12 @@ async function authorize() {
     return client;
 }
 
+/**
+ * Get recent files from drive.
+ * @param authClient - authorized OAuth2 client.
+ * @param number - number of recent files.
+ * @returns {Promise<drive_v3.Schema$File[]>} - recent files metadata.
+ */
 async function getRecentFiles(authClient, number) {
     const drive = google.drive({ version: 'v3', auth: authClient });
 
@@ -289,7 +295,7 @@ async function pullCreatedChangesWithLimit(authClient, driveId, timestamp, pageS
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: pageSize,
-            filter: `time >= "${timestamp}" detail.action_detail_case :CREATE`
+            filter: `time >= "${timestamp}" detail.action_detail_case:CREATE`
         }
     });
 }
@@ -309,7 +315,7 @@ async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize)
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: pageSize,
-            filter: `time >= "${timestamp}" detail.action_detail_case :(DELETE RENAME MOVE RESTORE)`
+            filter: `time >= "${timestamp}" detail.action_detail_case:(DELETE RENAME MOVE RESTORE)`
         }
     });
 }

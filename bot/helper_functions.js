@@ -119,6 +119,11 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
  * @returns {Promise<void>}
  */
 async function notifyDriveChanges(fileID, channel, action) {
+    if (channel.id === SYNC_DRIVE_CHANNEL_ID && action === 'create') {
+        console.log("Not notifying with fileId =", fileID, " as it is a create action");
+        return;
+    }
+
     console.log("Notifying with fileId =", fileID);
     await authorize()
         .then(async (driveClient) => {
@@ -232,7 +237,7 @@ async function replyWithRecentFiles(interaction) {
                         listEmbed.addFields(
                             {
                                 name: selectedFileInfo.name,
-                                value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
+                                value: `[**Link**](${selectedFileInfo.webViewLink})\n**Directory** ${selectedFileInfo.directory}\n**File Type** ${selectedFileInfo.mimeType}`,
                                 inline: true
                             }
                         );
