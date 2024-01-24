@@ -134,7 +134,7 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
         if (Object.keys(activity.primaryActionDetail).length > 0)
-            channel.send({content: Object.keys(activity.primaryActionDetail) [0] + "ed"});
+            channel.send({content: ativity.targets.driveItem.title+ " has been " +Object.keys(activity.primaryActionDetail) [0]+ "d" });
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {
@@ -145,7 +145,7 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
                 console.warn("this file id :", fileId, " should have been notified before ");
                 return;
             }
-            notifyDriveChanges(fileId, channel);
+            notifyDriveChanges(fileId, channel, Object.keys(activity.primaryActionDetail) [0]);
         });
 
     });
@@ -160,7 +160,7 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
  * @param channel - channel to notify.
  * @returns {Promise<void>}
  */
-async function notifyDriveChanges(fileID, channel) {
+async function notifyDriveChanges(fileID, channel, action) {
     console.log("Notifying with fileId =", fileID);
     await authorize()
         .then(async (driveClient) => {
@@ -171,7 +171,7 @@ async function notifyDriveChanges(fileID, channel) {
                     .setColor(0x0099FF)
                     .setTitle(responseMessage.name)
                     .setURL(responseMessage.webViewLink)
-                    .setDescription(`New file has been uploaded to ${responseMessage.directory}`)
+                    .setDescription(`New file has been ${action}d to ${responseMessage.directory}`)
                     .setThumbnail(responseMessage.iconLink)
                     .addFields({name: 'File Type', value: responseMessage.mimeType, inline: true})
                     .setImage(responseMessage.thumbnailLink)
