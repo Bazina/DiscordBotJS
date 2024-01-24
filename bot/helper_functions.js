@@ -137,7 +137,7 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
             findMissingData(changedFiles), "\nNote could be due to no updates found anyway");
 
         lastTimestamp = currentTimestamp;
-        console.log(lastTimestamp, `\ttime stamp updated at ${currentTimestamp} with no changed files`);
+        console.log(`Time stamp updated at ${currentTimestamp.toISOString()} with no changed files`);
         return;
     }
     console.log("changed files = \n", changedFiles);
