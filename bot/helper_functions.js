@@ -216,39 +216,38 @@ async function replyWithRecentFiles(interaction) {
         let selectedRecentFilesInfo = [];
         await authorize()
             .then(async (driveClient) => {
-                selectedRecentFilesInfo = getRecentFiles(driveClient, number);
+                selectedRecentFilesInfo = await getRecentFiles(driveClient, number);
+                console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
+
+                if (selectedRecentFilesInfo.length > 0) {
+                    const listEmbed = new EmbedBuilder()
+                        .setColor(0x0099FF)
+                        .setTitle('Recent Files')
+                        .setDescription(`Here are the ${selectedRecentFilesInfo.length} most recent files:`);
+
+                    for (const selectedFileInfo of selectedRecentFilesInfo) {
+                        console.log("File Data info = \n", selectedFileInfo);
+                        listEmbed.addFields(
+                            {
+                                name: selectedFileInfo.name,
+                                value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
+                                inline: true
+                            }
+                        );
+                    }
+
+                    try {
+                        await interaction.reply({embeds: [listEmbed], ephemeral: true});
+                    } catch (error) {
+                        console.error("Error replying with recent files:", error);
+                    }
+                } else {
+                    await interaction.reply({content: 'No recent files found.', ephemeral: true});
+                }
             })
             .catch((error) => {
                 console.error("Error during authorization:", error);
             });
-
-        console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
-
-        if (selectedRecentFilesInfo.length > 0) {
-            const listEmbed = new EmbedBuilder()
-                .setColor(0x0099FF)
-                .setTitle('Recent Files')
-                .setDescription(`Here are the ${selectedRecentFilesInfo.length} most recent files:`);
-
-            for (const selectedFileInfo of selectedRecentFilesInfo) {
-                console.log("File Data info = \n", selectedFileInfo);
-                listEmbed.addFields(
-                    {
-                        name: selectedFileInfo.name,
-                        value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
-                        inline: true
-                    }
-                );
-            }
-
-            try {
-                await interaction.reply({embeds: [listEmbed], ephemeral: true});
-            } catch (error) {
-                console.error("Error replying with recent files:", error);
-            }
-        } else {
-            await interaction.reply({content: 'No recent files found.', ephemeral: true});
-        }
     } catch (error) {
         console.error("Error filtering recent files:", error);
         await interaction.reply({content: 'An error occurred while fetching recent files.', ephemeral: true});
