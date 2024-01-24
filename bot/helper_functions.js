@@ -7,7 +7,6 @@ const {
     pullCreatedChanges,
     pullCreatedChangesWithLimit,
     pullAllChanges,
-    pullAllChangesWithLimit
 } = require("../drive")
 const maxLength = 21;
 let recentFilesInfo = [];
@@ -124,7 +123,7 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
         console.log(lastTimestamp, "\ttime stamp updated at with no changed files");
         return;
     }
-    console.log("chnaged files = \n", changedFiles);
+    console.log("changed files = \n", changedFiles);
 
     const channel = client.channels.cache.get(channelID);
     //send @here if channelID=NOTIFY_DRIVE_CHANNEL_ID for mentioning everyone on file creation only
@@ -134,7 +133,7 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
         if (Object.keys(activity.primaryActionDetail).length > 0)
-            channel.send({content: ativity.targets.driveItem.title + " has been " + Object.keys(activity.primaryActionDetail) [0] + "d"});
+            channel.send({content: activity.targets.driveItem.title + " has been " + Object.keys(activity.primaryActionDetail) [0] + "d"});
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {
@@ -158,6 +157,7 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
  * Notifies the drive changes with a file uploaded.
  * @param fileID - file id.
  * @param channel - channel to notify.
+ * @param action - action performed on the file.
  * @returns {Promise<void>}
  */
 async function notifyDriveChanges(fileID, channel, action) {
