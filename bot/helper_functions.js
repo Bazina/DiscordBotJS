@@ -7,7 +7,6 @@ const {
     pullCreatedChanges,
     pullCreatedChangesWithLimit,
     pullAllChanges,
-    pullAllChangesWithLimit
 } = require("../drive")
 const maxLength = 21;
 let recentFilesInfo = [];
@@ -106,6 +105,20 @@ async function initializeRecentFiles() {
     });
 }
 
+
+/**
+ * Converts the given base word to its simple past tense.
+ * @param {string} word - The base word to convert.
+ * @returns {string} - The word in its simple past tense.
+ */
+function convertToSimplePastTense(word) {
+    // Check if the action ends with 'e'
+    if (word.endsWith('e'))
+        // If it does, append 'd' to make it grammatically correct
+        word += 'd'; else word += 'ed';
+    return word;
+}
+
 /**
  * Loops over the changes.
  * If the file is not trashed, it notifies the changes.
@@ -128,13 +141,15 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
 
     const channel = client.channels.cache.get(channelID);
     //send @here if channelID=NOTIFY_DRIVE_CHANNEL_ID for mentioning everyone on file creation only
-    if (channelID === NOTIFY_DRIVE_CHANNEL_ID)
-        channel.send({content: "@here New Changes in Drive"});
+    if (channelID === NOTIFY_DRIVE_CHANNEL_ID) channel.send({content: "@here New Changes in Drive"});
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
-        if (Object.keys(activity.primaryActionDetail).length > 0)
-            channel.send({content: activity.targets.driveItem.title + " has been " + Object.keys(activity.primaryActionDetail) [0] + "d"});
+        if (Object.keys(activity.primaryActionDetail).length > 0) {
+            channel.send({
+                content: `${activity.targets.driveItem.title} has been ${convertToSimplePastTense(Object.keys(activity.primaryActionDetail)[0])}`
+            });
+        }
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {
@@ -172,7 +187,7 @@ async function notifyDriveChanges(fileID, channel, action) {
                     .setColor(0x0099FF)
                     .setTitle(responseMessage.name)
                     .setURL(responseMessage.webViewLink)
-                    .setDescription(`New file has been ${action}d to ${responseMessage.directory}`)
+                    .setDescription(`File has been ${convertToSimplePastTense(action)} to ${responseMessage.directory}`)
                     .setThumbnail(responseMessage.iconLink)
                     .addFields({name: 'File Type', value: responseMessage.mimeType, inline: true})
                     .setImage(responseMessage.thumbnailLink)
@@ -217,10 +232,7 @@ async function replyWithCourseData(interaction) {
                         .setLabel(file.name)
                         .setStyle(ButtonStyle.Link)
                         .setURL(file.webViewLink);
-                    if (file.mimeType !== 'application/vnd.google-apps.folder')
-                        button.setEmoji('📄');
-                    else
-                        button.setEmoji('📁');
+                    if (file.mimeType !== 'application/vnd.google-apps.folder') button.setEmoji('📄'); else button.setEmoji('📁');
 
                     actionRow.addComponents(button);
 
@@ -229,8 +241,7 @@ async function replyWithCourseData(interaction) {
                         actionRow = new ActionRowBuilder();
                     }
                 }
-                if (cnt % 5 !== 0)
-                    buttonsRow.push(actionRow);
+                if (cnt % 5 !== 0) buttonsRow.push(actionRow);
             });
         })
         .then(async () => {
@@ -250,8 +261,7 @@ async function replyWithRecentFiles(interaction) {
 
     if (number <= 0 || number > maxLength) {
         await interaction.reply({
-            content: `Invalid number. Please enter a value between 1 and ${maxLength}.`,
-            ephemeral: true
+            content: `Invalid number. Please enter a value between 1 and ${maxLength}.`, ephemeral: true
         });
         return;
     }
@@ -287,13 +297,11 @@ async function replyWithRecentFiles(interaction) {
 
             for (const selectedFileInfo of selectedRecentFilesInfo) {
                 console.log("File Data info = \n", selectedFileInfo);
-                listEmbed.addFields(
-                    {
-                        name: selectedFileInfo.name,
-                        value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
-                        inline: true
-                    }
-                );
+                listEmbed.addFields({
+                    name: selectedFileInfo.name,
+                    value: `Link      :    ${selectedFileInfo.webViewLink}\nDirectory   :    ${selectedFileInfo.directory}\nFile Type    :    ${selectedFileInfo.mimeType}`,
+                    inline: true
+                });
             }
 
             try {
@@ -325,7 +333,5 @@ setInterval(() => {
 }, 180000);
 
 module.exports = {
-    replyWithCourseData,
-    replyWithRecentFiles,
-    initializeRecentFiles
+    replyWithCourseData, replyWithRecentFiles, initializeRecentFiles
 };
