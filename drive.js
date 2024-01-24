@@ -12,7 +12,7 @@ let HOME_DIR;
 
 /**
  * Reads previously authorized credentials from the save file.
- * @return {Promise<OAuth2Client|null>}
+ * @return {Promise<OAuth2Client|null>} - An OAuth2 client with credentials if found, null otherwise.
  */
 async function loadSavedCredentialsIfExist() {
     try {
@@ -28,7 +28,7 @@ async function loadSavedCredentialsIfExist() {
  * Serializes credentials to a file compatible with GoogleAUth.fromJSON.
  *
  * @param {OAuth2Client} client - The OAuth2 client to save credentials for.
- * @return {Promise<void>}
+ * @return {Promise<void>} - void.
  */
 async function saveCredentials(client) {
     const content = await fs.readFile(CREDENTIALS_PATH);
@@ -45,7 +45,7 @@ async function saveCredentials(client) {
 
 /**
  * Load or request or authorization to call APIs.
- *
+ * @return {Promise<OAuth2Client>} - An authorized OAuth2 client.
  */
 async function authorize() {
     let client = await loadSavedCredentialsIfExist();
@@ -62,10 +62,29 @@ async function authorize() {
     return client;
 }
 
+async function getRecentFiles(authClient, number) {
+    const drive = google.drive({version: 'v3', auth: authClient});
+
+    let files = await drive.files.list({
+        pageSize: number,
+        fields: 'files(id, name, mimeType, parents, webViewLink, iconLink, thumbnailLink, shortcutDetails)',
+        orderBy: 'recency',
+        q: `trashed = false and mimeType != 'application/vnd.google-apps.folder'`
+    });
+
+    // call buildNotificationMessage for each file in files and return the result
+
+    files = files.data.files.map((file) => {
+        return buildNotificationMessage(authClient, file.id);
+    });
+
+    return files;
+}
+
 /**
  * Build real link if shortcut.
  * @param fileMetaData - file metadata from Google Drive.
- * @returns {*}
+ * @returns {*} - file metadata.
  */
 function buildRealLinkIfShortcut(fileMetaData) {
     if (fileMetaData.data.mimeType === "application/vnd.google-apps.shortcut") {
@@ -88,6 +107,7 @@ function buildRealLinkIfShortcut(fileMetaData) {
  * Lists the names and IDs of up to 10 files.
  * @param {OAuth2Client} authClient - An authorized OAuth2 client.
  * @param newFileId
+ * @returns {Promise<drive_v3.Schema$File>} - file metadata.
  */
 async function buildNotificationMessage(authClient, newFileId) {
     const drive = google.drive({version: 'v3', auth: authClient});
@@ -134,7 +154,7 @@ async function buildNotificationMessage(authClient, newFileId) {
  * Get all courses metadata in specific folders in drive.
  * @param authClient - authorized OAuth2 client.
  * @param driveId - drive id.
- * @returns {Promise<(*&{value: *})[]>}
+ * @returns {Promise<(*&{value: *})[]>} - courses metadata.
  */
 async function getCourseMetaDataInSpecificFoldersInDrive(authClient, driveId) {
     const drive = google.drive({version: 'v3', auth: authClient});
@@ -178,7 +198,7 @@ async function getCourseMetaDataInSpecificFoldersInDrive(authClient, driveId) {
  * Get all folders metadata in specific folder.
  * @param authClient - authorized OAuth2 client.
  * @param folderId - folder id.
- * @returns {Promise<drive_v3.Schema$File[]>}
+ * @returns {Promise<drive_v3.Schema$File[]>} - folders metadata.
  */
 async function getFoldersMetaDataInFolder(authClient, folderId) {
     const drive = google.drive({version: 'v3', auth: authClient});
@@ -204,7 +224,7 @@ async function getFoldersMetaDataInFolder(authClient, folderId) {
  * Get metadata of file by id.
  * @param authClient - authorized OAuth2 client.
  * @param folderId - file id.
- * @returns {Promise<drive_v3.Schema$File>}
+ * @returns {Promise<drive_v3.Schema$File>} - file metadata.
  */
 async function getMetaDataById(authClient, folderId) {
     const drive = google.drive({version: 'v3', auth: authClient});
@@ -227,7 +247,7 @@ async function getMetaDataById(authClient, folderId) {
  * @param authClient - authorized OAuth2 client.
  * @param driveId - drive id.
  * @param timestamp - timestamp.
- * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>} - changes.
  */
 async function pullCreatedChanges(authClient, driveId, timestamp) {
     return pullCreatedChangesWithLimit(authClient, driveId, timestamp, 10);
@@ -238,7 +258,7 @@ async function pullCreatedChanges(authClient, driveId, timestamp) {
  * @param authClient - authorized OAuth2 client.
  * @param driveId - drive id.
  * @param timestamp - timestamp.
- * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>} - changes.
  */
 async function pullAllChanges(authClient, driveId, timestamp) {
     return pullAllChangesWithLimit(authClient, driveId, timestamp, 10);
@@ -249,8 +269,8 @@ async function pullAllChanges(authClient, driveId, timestamp) {
  * @param authClient - authorized OAuth2 client.
  * @param driveId - drive id.
  * @param timestamp - timestamp.
- * @param pageSize - number of changes .
- * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
+ * @param pageSize - number of changes.
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>} - changes.
  */
 async function pullCreatedChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
@@ -269,8 +289,8 @@ async function pullCreatedChangesWithLimit(authClient, driveId, timestamp, pageS
  * @param authClient - authorized OAuth2 client.
  * @param driveId - drive id.
  * @param timestamp - timestamp.
- * @param pageSize - number of changes .
- * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
+ * @param pageSize - number of changes.
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>} - changes.
  */
 async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize) {
     const driveActivity = await google.driveactivity({version: 'v2', auth: authClient});
@@ -287,7 +307,7 @@ async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize)
 
 /**
  * Create token.json locally.
- * @returns {Promise<void>}
+ * @returns {Promise<void>} - void.
  */
 async function createTokenLocally() {
     authorize().then(async (driveClient) => {
@@ -299,6 +319,9 @@ async function createTokenLocally() {
         });
 
         HOME_DIR = homeMetaData.data.name;
+        getRecentFiles(driveClient, 10).then((files) => {
+            console.log(files);
+        });
     });
 }
 
@@ -313,7 +336,6 @@ module.exports = {
     getFoldersMetaDataInFolder,
     getMetaDataById,
     pullCreatedChanges,
-    pullCreatedChangesWithLimit,
     pullAllChanges,
-    pullAllChangesWithLimit
+    getRecentFiles,
 };

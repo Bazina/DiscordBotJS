@@ -5,32 +5,14 @@ const {
     getFoldersMetaDataInFolder,
     getMetaDataById,
     pullCreatedChanges,
-    pullCreatedChangesWithLimit,
     pullAllChanges,
+    getRecentFiles
 } = require("../drive")
 const maxLength = 21;
-let recentFilesInfo = [];
 let lastTimestamp = new Date();
-let beginningOfRecent = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 let getCourseDataCallsStats = 0;
 let getRecentDataCallsStats = 0;
 
-/**
- * Pushes the response message into recent files info.
- * @param responseMessage - response message from Google Drive.
- */
-function pushIntoRecentFileInfoUsingResponseMessage(responseMessage) {
-    const responseDict = {};
-    responseDict.name = responseMessage.name;
-    responseDict.id = responseMessage.id;
-    responseDict.mimeType = responseMessage.mimeType;
-    responseDict.directory = responseMessage.directory;
-    responseDict.webViewLink = responseMessage.webViewLink;
-    if (recentFilesInfo.length > maxLength) {
-        recentFilesInfo.pop();
-    }
-    recentFilesInfo.unshift(responseDict);
-}
 
 /**
  * Checks if the activities data is empty.
@@ -78,6 +60,7 @@ function convertToSimplePastTense(word) {
         word += 'd'; else word += 'ed';
     return word;
 }
+
 /**
  * Loops over the changes.
  * If the file is not trashed, it notifies the changes.
@@ -100,9 +83,11 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
     console.log("changed files = \n", changedFiles);
 
     const channel = client.channels.cache.get(channelID);
+
     //send @here if channelID=NOTIFY_DRIVE_CHANNEL_ID for mentioning everyone on file creation only
     if (channelID === NOTIFY_DRIVE_CHANNEL_ID)
         channel.send({content: "@here New Changes in Drive"});
+
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
@@ -144,13 +129,12 @@ async function notifyDriveChanges(fileID, channel, action) {
                     .setColor(0x0099FF)
                     .setTitle(responseMessage.name)
                     .setURL(responseMessage.webViewLink)
-                    .setDescription(`File has been ${convertToSimplePastTense(action)} to ${responseMessage.directory}`)
+                    .setDescription(`File has been **${convertToSimplePastTense(action)}** in ${responseMessage.directory}`)
                     .setThumbnail(responseMessage.iconLink)
                     .addFields({name: 'File Type', value: responseMessage.mimeType, inline: true})
                     .setImage(responseMessage.thumbnailLink)
                     .setTimestamp();
                 channel.send({embeds: [embed]});
-                pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
             });
         })
         .catch(console.error);
@@ -228,27 +212,16 @@ async function replyWithRecentFiles(interaction) {
         return;
     }
 
-    console.log("Recent Files Info = \n", recentFilesInfo);
-
     try {
+        let selectedRecentFilesInfo = [];
         await authorize()
             .then(async (driveClient) => {
-                const filterResults = await Promise.all(recentFilesInfo.map(async (recentFileInfo) => {
-                    const responseMessage = await getMetaDataById(driveClient, recentFileInfo.id);
-                    if (!responseMessage.trashed) {
-                        console.log("File Data Trashed = \n", responseMessage.trashed);
-                        return true;
-                    }
-                    return false;
-                }));
-
-                recentFilesInfo = recentFilesInfo.filter((_, index) => filterResults[index]);
+                selectedRecentFilesInfo = getRecentFiles(driveClient, number);
             })
             .catch((error) => {
                 console.error("Error during authorization:", error);
             });
 
-        let selectedRecentFilesInfo = recentFilesInfo.slice(0, Math.min(number, recentFilesInfo.length));
         console.log("Selected Recent Files Info = \n", selectedRecentFilesInfo);
 
         if (selectedRecentFilesInfo.length > 0) {
