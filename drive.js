@@ -63,23 +63,33 @@ async function authorize() {
 }
 
 async function getRecentFiles(authClient, number) {
-    const drive = google.drive({version: 'v3', auth: authClient});
+    const drive = google.drive({ version: 'v3', auth: authClient });
 
-    let files = await drive.files.list({
-        pageSize: number,
-        fields: 'files(id, name, mimeType, parents, webViewLink, iconLink, thumbnailLink, shortcutDetails)',
-        orderBy: 'recency',
-        q: `trashed = false and mimeType != 'application/vnd.google-apps.folder'`
-    });
+    try {
+        // Await the result of drive.files.list
+        const response = await drive.files.list({
+            pageSize: number,
+            fields: 'files(id, name, mimeType, parents, webViewLink, iconLink, thumbnailLink, shortcutDetails)',
+            orderBy: 'recency',
+            q: `trashed = false and mimeType != 'application/vnd.google-apps.folder'`
+        });
 
-    // call buildNotificationMessage for each file in files and return the result
+        let files = response.data.files;
 
-    files = files.data.files.map(async (file) => {
-        return await buildNotificationMessage(authClient, file.id);
-    });
+        // call buildNotificationMessage for each file in files and return the result
+        // use Promise.all to wait for all promises to resolve
+        files = await Promise.all(files.map(async (file) => {
+            return await buildNotificationMessage(authClient, file.id);
+        }));
 
-    return files;
+        return files;
+    } catch (error) {
+        // Handle any errors here
+        console.error('Error fetching recent files:', error);
+        throw error; // You may want to handle or log the error appropriately
+    }
 }
+
 
 /**
  * Build real link if shortcut.
