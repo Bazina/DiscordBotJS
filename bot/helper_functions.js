@@ -84,7 +84,10 @@ async function initializeRecentFiles() {
 
         for (const activity of recentFiles.data.activities) {
             activity.targets = await Promise.all(activity.targets.map(async (target) => {
-                const fileId = target.driveItem.name.split('/')[1];
+                let fileId;
+                if (target.driveItem && target.driveItem.name) {
+                    fileId = target.driveItem.name.split('/')[1];
+                }
                 try {
                     const responseMessage = await getMetaDataById(driveClient, fileId);
                     return !responseMessage.trashed;
@@ -99,7 +102,10 @@ async function initializeRecentFiles() {
             console.log(activity.targets);
 
             for (const target of activity.targets) {
-                const fileId = target.driveItem.name.split('/')[1];
+                let fileId;
+                if (target.driveItem && target.driveItem.name) {
+                    fileId = target.driveItem.name.split('/')[1];
+                }
                 try {
                     const responseMessage = await buildNotificationMessage(driveClient, fileId);
                     pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
