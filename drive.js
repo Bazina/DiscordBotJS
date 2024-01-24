@@ -279,7 +279,7 @@ async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize)
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: pageSize,
-            filter: `time >= "${timestamp}" detail.action_detail_case :(CREATE DELETE RENAME MOVE RESTORE)`
+            filter: `time >= "${timestamp}" detail.action_detail_case :(DELETE RENAME MOVE RESTORE)`
         }
     });
 }

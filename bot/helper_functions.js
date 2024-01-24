@@ -108,6 +108,7 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
         console.log(activity.primaryActionDetail);
         console.log(activity.targets);
 
+        let action = Object.keys(activity.primaryActionDetail)[0];
         activity.targets.forEach((target) => {
             let fileId = target.driveItem.name.split('/')[1];
             let timeStamp = activity.timestamp;
@@ -116,7 +117,7 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
                 console.warn("this file id :", fileId, " should have been notified before ");
                 return;
             }
-            notifyDriveChanges(fileId, channel, Object.keys(activity.primaryActionDetail) [0]);
+            notifyDriveChanges(fileId, channel, action);
         });
 
     });
