@@ -126,13 +126,14 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
     }
     console.log("chnaged files = \n", changedFiles);
 
-    const diveChannel = client.channels.cache.get(channelID);
+    const channel = client.channels.cache.get(channelID);
     //send @here if channelID=NOTIFY_DRIVE_CHANNEL_ID for mentioning everyone on file creation only
     if(channelID===NOTIFY_DRIVE_CHANNEL_ID)
-        diveChannel.send({content: "@here New Changes in Drive"});
+        channel.send({content: "@here New Changes in Drive"});
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
+        channel.send({content: activity.primaryActionDetail.keys()[0] + "ed"});
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {
@@ -143,7 +144,7 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
                 console.warn("this file id :", fileId, " should have been notified before ");
                 return;
             }
-            notifyDriveChanges(fileId, diveChannel);
+            notifyDriveChanges(fileId, channel);
         });
 
     });
@@ -155,10 +156,10 @@ async function loopOverChanges(changedFiles, callTimeStamps,channelID) {
 /**
  * Notifies the drive changes with a file uploaded.
  * @param fileID - file id.
- * @param diveChannel - channel to notify.
+ * @param channel - channel to notify.
  * @returns {Promise<void>}
  */
-async function notifyDriveChanges(fileID, diveChannel) {
+async function notifyDriveChanges(fileID, channel) {
     console.log("Notifying with fileId =", fileID);
     await authorize()
         .then(async (driveClient) => {
@@ -174,7 +175,7 @@ async function notifyDriveChanges(fileID, diveChannel) {
                     .addFields({name: 'File Type', value: responseMessage.mimeType, inline: true})
                     .setImage(responseMessage.thumbnailLink)
                     .setTimestamp();
-                diveChannel.send({embeds: [embed]});
+                channel.send({embeds: [embed]});
                 pushIntoRecentFileInfoUsingResponseMessage(responseMessage);
             });
         })
