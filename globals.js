@@ -4,6 +4,7 @@ global.token = process.env['token'];
 global.CLIENT_ID = process.env['client_id'];
 global.DRIVE_ID = process.env['drive_id'];
 global.NOTIFY_DRIVE_CHANNEL_ID = process.env['notifyDriveChannelID'];
+global.SYNC_DRIVE_CHANNEL_ID = process.env['syncDriveChannelID'];
 global.DIVE_WITH_DRIVE_CHANNEL_ID = process.env['diveWithDriveChannelID'];
 
 global.client = new Client({
