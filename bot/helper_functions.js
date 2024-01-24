@@ -106,11 +106,6 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
-        if (Object.keys(activity.primaryActionDetail).length > 0) {
-            channel.send({
-                content: `${activity.targets.driveItem.title} has been ${convertToSimplePastTense(Object.keys(activity.primaryActionDetail)[0])}`
-            });
-        }
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {
