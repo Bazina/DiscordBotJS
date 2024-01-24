@@ -234,12 +234,12 @@ async function pullCreatedChanges(authClient, driveId, timestamp) {
 }
 
 /**
-* Pull changes from drive.
-* @param authClient - authorized OAuth2 client.
-* @param driveId - drive id.
-* @param timestamp - timestamp.
-* @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
-*/
+ * Pull changes from drive.
+ * @param authClient - authorized OAuth2 client.
+ * @param driveId - drive id.
+ * @param timestamp - timestamp.
+ * @returns {GaxiosPromise<Schema$QueryDriveActivityResponse>}
+ */
 async function pullAllChanges(authClient, driveId, timestamp) {
     return pullAllChangesWithLimit(authClient, driveId, timestamp, 10);
 }
@@ -263,6 +263,7 @@ async function pullCreatedChangesWithLimit(authClient, driveId, timestamp, pageS
         }
     });
 }
+
 /**
  * Pull changes from drive with limit on number of changes.
  * @param authClient - authorized OAuth2 client.
@@ -284,7 +285,6 @@ async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize)
 }
 
 
-
 /**
  * Create token.json locally.
  * @returns {Promise<void>}
@@ -303,7 +303,7 @@ async function createTokenLocally() {
 }
 
 (async () => {
-        await createTokenLocally();
+    await createTokenLocally();
 })();
 
 module.exports = {
