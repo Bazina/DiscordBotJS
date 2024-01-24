@@ -8,6 +8,7 @@ const SCOPES = ['https://www.googleapis.com/auth/drive.readonly', 'https://www.g
 
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
+let HOME_DIR;
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -90,7 +91,6 @@ function buildRealLinkIfShortcut(fileMetaData) {
  */
 async function buildNotificationMessage(authClient, newFileId) {
     const drive = google.drive({version: 'v3', auth: authClient});
-    let fileParentsNames = [];
     let message = "";
 
     const fileMetaData = await drive.files.get({
@@ -101,6 +101,7 @@ async function buildNotificationMessage(authClient, newFileId) {
     if (fileMetaData.data.parents.length === 0)
         return fileMetaData.data;
 
+    let fileParentsNames = [];
     let fileParentId = fileMetaData.data.parents[0];
 
     while (true) {
@@ -112,7 +113,7 @@ async function buildNotificationMessage(authClient, newFileId) {
         const regex = /([0-9][a-z]+\s\w+)/g;
         let parentName = parentMetaData.data.name;
 
-        if (!parentMetaData.data.parents || regex.test(parentName) || parentName === "My Drive" || fileParentsNames.length > 5)
+        if (!parentMetaData.data.parents || regex.test(parentName) || parentName === HOME_DIR)
             break;
         else {
             fileParentsNames.push(parentName);
@@ -277,7 +278,7 @@ async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize)
         requestBody: {
             ancestorName: `items/${driveId}`,
             pageSize: pageSize,
-            filter: `time >= "${timestamp}"`
+            filter: `time >= "${timestamp}" detail.action_detail_case :(CREATE DELETE RENAME MOVE)`
         }
     });
 }
@@ -290,8 +291,14 @@ async function pullAllChangesWithLimit(authClient, driveId, timestamp, pageSize)
  */
 async function createTokenLocally() {
     authorize().then(async (driveClient) => {
-        const courses = await getCourseMetaDataInSpecificFoldersInDrive(driveClient, DRIVE_ID);
-        console.log(courses);
+        const drive = google.drive({version: 'v3', auth: driveClient});
+
+        const homeMetaData = await drive.files.get({
+            fileId: DRIVE_ID,
+            fields: "name"
+        });
+
+        HOME_DIR = homeMetaData.data.name;
     });
 }
 
