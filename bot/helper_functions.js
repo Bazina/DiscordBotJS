@@ -7,7 +7,6 @@ const {
     pullCreatedChanges,
     pullCreatedChangesWithLimit,
     pullAllChanges,
-    pullAllChangesWithLimit
 } = require("../drive")
 const maxLength = 21;
 let recentFilesInfo = [];
@@ -107,6 +106,18 @@ async function initializeRecentFiles() {
 }
 
 /**
+ * Converts the given base word to its simple past tense.
+ * @param {string} word - The base word to convert.
+ * @returns {string} - The word in its simple past tense.
+ */
+function convertToSimplePastTense(word) {
+    // Check if the action ends with 'e'
+    if (word.endsWith('e'))
+        // If it does, append 'd' to make it grammatically correct
+        word += 'd'; else word += 'ed';
+    return word;
+}
+/**
  * Loops over the changes.
  * If the file is not trashed, it notifies the changes.
  * @param changedFiles - changed files object.
@@ -133,8 +144,11 @@ async function loopOverChanges(changedFiles, callTimeStamps, channelID) {
     changedFiles.data.activities.forEach((activity) => {
         console.log("looping over changes");
         console.log(activity.primaryActionDetail);
-        if (Object.keys(activity.primaryActionDetail).length > 0)
-            channel.send({content: activity.targets.driveItem.title + " has been " + Object.keys(activity.primaryActionDetail) [0] + "d"});
+        if (Object.keys(activity.primaryActionDetail).length > 0) {
+            channel.send({
+                content: `${activity.targets.driveItem.title} has been ${convertToSimplePastTense(Object.keys(activity.primaryActionDetail)[0])}`
+            });
+        }
         console.log(activity.targets);
 
         activity.targets.forEach((target) => {
@@ -172,7 +186,7 @@ async function notifyDriveChanges(fileID, channel, action) {
                     .setColor(0x0099FF)
                     .setTitle(responseMessage.name)
                     .setURL(responseMessage.webViewLink)
-                    .setDescription(`New file has been ${action}d to ${responseMessage.directory}`)
+                    .setDescription(`File has been ${convertToSimplePastTense(action)} to ${responseMessage.directory}`)
                     .setThumbnail(responseMessage.iconLink)
                     .addFields({name: 'File Type', value: responseMessage.mimeType, inline: true})
                     .setImage(responseMessage.thumbnailLink)
