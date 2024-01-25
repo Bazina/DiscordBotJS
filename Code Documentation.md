@@ -39,8 +39,6 @@ This document provides an overview and documentation for the codebase of the Dis
 
 ## Helper Functions
 
-- **pushIntoRecentFileInfoUsingResponseMessage(responseMessage):** Adds information about a file into the list of recent files.
-
 - **loopOverChanges(changedFiles, callTimeStamps):** Loops over the changes in Google Drive and notifies the Discord channel about new changes.
 
 - **replyWithCourseData(interaction):** Replies with course data, including folders and files in a specified course.
