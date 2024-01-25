@@ -22,9 +22,17 @@ This Discord bot enhances collaboration by providing real-time notifications abo
 
 ## Features
 
-- Real-time notifications about new files in Google Drive (automated).
-- Retrieve information about recent files `(/recent <number>)`.
-- Get a list of files in a specific course folder `(/get <course>)`.
+1. **Real-time File Creation Notifications:**
+   Receive instant notifications in the notify channel for newly created files (uploads and new additions) in Google Drive.
+
+2. **Comprehensive Drive Activity Notifications:**
+   Stay informed with automated notifications in the sync channel for all drive activities, including file creation, deletion, renaming, movement, and restoration.
+
+3. **Retrieve Recent Files Information:**
+   Use the command `/recent <number>` to fetch information about the most recent files, where `<number>` represents the desired quantity.
+
+4. **List Files in a Specific Course Folder:**
+   Utilize the command `/get <course>` to obtain a list of files within a designated course folder.
 
 > **Note**
 > 
@@ -60,7 +68,7 @@ A recommended video tutorial for setting up the Discord bot can be found [here](
 1. Create a new application on the [Discord Developer Portal](https://discord.com/developers/applications).
 2. Obtain the Bot Token and Client ID from the created application.
 3. Invite the bot to your Discord server.
-4. Create channel(s) (notifyDriveChannel, diveWithDriveChannel) for the bot
+4. Create channel(s) (notifyDriveChannel, diveWithDriveChannel,syncDrive) for the bot
 
 > **Notes**
 > - The bot will not work until you have completed all the following steps.
@@ -92,7 +100,7 @@ Here is the link to the [Render](https://dashboard.render.com/) website where yo
 3. Connect to your GitHub repository and select the branch you want to deploy.
 4. Select Frankfurt as the region.
 5. Set the build command to `npm install` and the start command to `node index.js`.
-6. Add Environment Variables `client_id, token, notifyDriveChannelID, diveWithDriveChannelID, drive_id`, All of these can be found in the `globals.js` file and all belong to discord except for `drive_id` which is the ID of the Google Drive you want to connect to.
+6. Add Environment Variables `client_id, token, notifyDriveChannelID, diveWithDriveChannelID, syncDriveChannelID, drive_id`, All of these can be found in the `globals.js` file and all belong to discord except for `drive_id` which is the ID of the Google Drive you want to connect to.
 7. Add Secret Files `credentials.json` and `token.json`. These files are used to authenticate with the Google Drive API.
 
 > **Important Note**
