@@ -70,8 +70,8 @@ A recommended video tutorial for setting up the Discord bot can be found [here](
 ## Google Drive Setup
 Here is a [video](https://youtu.be/ifw3b4Uf06g) that walks through the setup process.
 
-1. [Set up a Google Cloud Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and enable the Google Drive API.
-2. Create a OAuth consent screen (web application) and add the following scopes
+1. [Set up a Google Cloud Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and enable the Google Drive API and Google Drive Activity API.
+2. Create a OAuth consent screen (web application) and add the following scopes (optional, you can go to step 4)
 
    - `https://www.googleapis.com/auth/drive.activity.readonly'`
    - `https://www.googleapis.com/auth/drive.readonly`
