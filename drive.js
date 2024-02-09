@@ -69,7 +69,7 @@ async function authorize() {
  * @returns {Promise<drive_v3.Schema$File[]>} - recent files metadata.
  */
 async function getRecentFiles(authClient, number) {
-    const drive = google.drive({ version: 'v3', auth: authClient });
+    const drive = google.drive({version: 'v3', auth: authClient});
 
     try {
         // Await the result of drive.files.list
@@ -151,7 +151,11 @@ async function buildNotificationMessage(authClient, newFileId) {
 
         if (!parentMetaData.data.parents || regex.test(parentName) || parentName === HOME_DIR)
             break;
-        else {
+        else if (parentMetaData.data.parents && (regex.test(parentName) || parentName === HOME_DIR)) {
+            if (fileParentsNames.length === 0)
+                fileParentsNames.push(parentName);
+            break;
+        } else {
             fileParentsNames.push(parentName);
             fileParentId = parentMetaData.data.parents[0];
         }
